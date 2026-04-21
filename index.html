@@ -13,16 +13,45 @@
       margin: 0;
       padding: 24px;
     }
+
     .box {
       max-width: 420px;
       margin: 40px auto;
       background: #111827;
       border-radius: 16px;
       padding: 24px;
+      box-sizing: border-box;
     }
+
     h1 {
       margin-top: 0;
+      font-size: 28px;
     }
+
+    p {
+      color: #d1d5db;
+      line-height: 1.5;
+    }
+
+    .user-card {
+      margin: 20px 0;
+      padding: 14px;
+      background: #1f2937;
+      border-radius: 12px;
+      display: none;
+    }
+
+    .label {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 6px;
+    }
+
+    .value {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
     button {
       width: 100%;
       padding: 14px;
@@ -33,27 +62,74 @@
       font-size: 16px;
       cursor: pointer;
     }
+
+    .result {
+      margin-top: 20px;
+      padding: 14px;
+      background: #0b1220;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      display: none;
+      line-height: 1.5;
+    }
   </style>
 </head>
 <body>
   <div class="box">
     <h1>InvestPath AI</h1>
     <p>Подбор сценариев инвестирования под ваши цели.</p>
+
+    <div class="user-card" id="userCard">
+      <div class="label">Пользователь Telegram</div>
+      <div class="value" id="userName">Не определён</div>
+    </div>
+
     <button onclick="startApp()">Начать анализ</button>
+
+    <div class="result" id="resultBox"></div>
   </div>
 
   <script>
     const tg = window.Telegram.WebApp;
+
     tg.ready();
     tg.expand();
 
-    function startApp() {
-      alert("Mini App работает 🚀");
-      const user = tg.initDataUnsafe.user;
-      if (user) {
-        alert("Привет, " + user.first_name);
-      }
+    const user = tg.initDataUnsafe?.user;
+    const userCard = document.getElementById("userCard");
+    const userName = document.getElementById("userName");
+    const resultBox = document.getElementById("resultBox");
+
+    if (user) {
+      userCard.style.display = "block";
+      userName.textContent = `${user.first_name || ""} ${user.last_name || ""}`.trim();
     }
+
+    tg.MainButton.setText("Продолжить");
+    tg.MainButton.color = "#2563eb";
+    tg.MainButton.textColor = "#ffffff";
+
+    function startApp() {
+      let text = "Мини-приложение запущено успешно.";
+
+      if (user) {
+        text += `\n\nПривет, ${user.first_name}!`;
+      } else {
+        text += "\n\nTelegram-пользователь не определён.";
+      }
+
+      text += "\n\nСледующий шаг: добавим анкету инвестора.";
+
+      resultBox.style.display = "block";
+      resultBox.textContent = text;
+
+      tg.MainButton.show();
+    }
+
+    tg.MainButton.onClick(function () {
+      resultBox.style.display = "block";
+      resultBox.textContent += "\n\nНажата главная кнопка Telegram.";
+    });
   </script>
 </body>
 </html>
