@@ -84,9 +84,32 @@
       <div class="value" id="userName">Не определён</div>
     </div>
 
-    <button onclick="startApp()">Начать анализ</button>
+<div id="quiz">
 
-    <div class="result" id="resultBox"></div>
+  <div class="question" id="q1">
+    <p>Сколько хочешь инвестировать?</p>
+    <button onclick="next(1, '100k')">до 100k ₽</button>
+    <button onclick="next(1, '500k')">100k–500k ₽</button>
+    <button onclick="next(1, '1m+')">1 млн+ ₽</button>
+  </div>
+
+  <div class="question" id="q2" style="display:none;">
+    <p>Срок инвестиций?</p>
+    <button onclick="next(2, 'short')">до 1 года</button>
+    <button onclick="next(2, 'mid')">1–3 года</button>
+    <button onclick="next(2, 'long')">3+ года</button>
+  </div>
+
+  <div class="question" id="q3" style="display:none;">
+    <p>Готов к риску?</p>
+    <button onclick="next(3, 'low')">минимальный</button>
+    <button onclick="next(3, 'medium')">средний</button>
+    <button onclick="next(3, 'high')">высокий</button>
+  </div>
+
+  <div class="result" id="resultBox"></div>
+
+</div>
   </div>
 
   <script>
@@ -130,6 +153,38 @@
       resultBox.style.display = "block";
       resultBox.textContent += "\n\nНажата главная кнопка Telegram.";
     });
-  </script>
+  let answers = {};
+
+function next(step, value) {
+  answers["q" + step] = value;
+
+  document.getElementById("q" + step).style.display = "none";
+
+  if (step < 3) {
+    document.getElementById("q" + (step + 1)).style.display = "block";
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  const box = document.getElementById("resultBox");
+  box.style.display = "block";
+
+  let result = "Твоя стратегия:\n\n";
+
+  if (answers.q3 === "low") {
+    result += "Консервативная: облигации, вклады";
+  } else if (answers.q3 === "medium") {
+    result += "Сбалансированная: ETF + облигации";
+  } else {
+    result += "Агрессивная: акции, крипто";
+  }
+
+  box.textContent = result;
+
+  tg.MainButton.setText("Сохранить стратегию");
+  tg.MainButton.show();
+}
 </body>
 </html>
