@@ -6,226 +6,369 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>InvestPath AI</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-      margin: 0;
-      padding: 24px;
-    }
-
-    .box {
-      max-width: 430px;
-      margin: 20px auto;
-      background: #111827;
-      border-radius: 18px;
-      padding: 24px;
+    * {
       box-sizing: border-box;
     }
 
-    h1 {
+    body {
+      margin: 0;
+      padding: 18px;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(180deg, #071225 0%, #0b1730 100%);
+      color: #ffffff;
+    }
+
+    .app {
+      max-width: 430px;
+      margin: 0 auto;
+    }
+
+    .screen {
+      background: rgba(17, 24, 39, 0.96);
+      border: 1px solid rgba(51, 65, 85, 0.7);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
+    }
+
+    .topbar {
+      margin-bottom: 18px;
+      font-size: 13px;
+      color: #94a3b8;
+      text-align: center;
+    }
+
+    .brand {
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1.05;
       margin: 0 0 14px;
-      font-size: 32px;
-      line-height: 1.1;
+      letter-spacing: -0.5px;
     }
 
     .subtitle {
-      color: #cbd5e1;
-      line-height: 1.5;
+      font-size: 18px;
+      color: #dbe4f0;
+      line-height: 1.45;
+      margin-bottom: 20px;
+    }
+
+    .progress-wrap {
       margin-bottom: 22px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+
+    .progress {
+      height: 8px;
+      background: #1f2937;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 12%;
+      background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
+      border-radius: 999px;
+      transition: width 0.25s ease;
     }
 
     .step {
       display: none;
+      animation: fadeIn 0.22s ease;
     }
 
     .step.active {
       display: block;
     }
 
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .question {
       font-size: 28px;
-      font-weight: 700;
+      font-weight: 800;
       line-height: 1.2;
-      margin-bottom: 18px;
+      margin: 0 0 12px;
     }
 
     .hint {
-      color: #94a3b8;
+      color: #9fb0c6;
       font-size: 15px;
+      line-height: 1.5;
       margin-bottom: 18px;
-      line-height: 1.4;
     }
 
     .buttons {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      margin-top: 10px;
     }
 
     button {
       width: 100%;
-      padding: 16px 14px;
       border: none;
-      border-radius: 14px;
-      background: #2563eb;
+      border-radius: 16px;
+      padding: 16px 18px;
+      background: #2f67ea;
       color: white;
       font-size: 18px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       transition: transform 0.12s ease, opacity 0.12s ease, background 0.12s ease;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.18);
     }
 
     button:hover {
-      opacity: 0.95;
+      opacity: 0.96;
     }
 
     button:active {
-      transform: scale(0.98);
-      background: #1d4ed8;
+      transform: scale(0.985);
+      background: #1f56d4;
     }
 
     .secondary {
-      background: #1f2937;
+      background: #1e293b;
       border: 1px solid #334155;
+      box-shadow: none;
     }
 
     .secondary:active {
-      background: #273449;
+      background: #243248;
+    }
+
+    .ghost {
+      background: transparent;
+      border: 1px dashed #475569;
+      color: #cbd5e1;
+      box-shadow: none;
     }
 
     input {
       width: 100%;
-      padding: 14px 14px;
-      border-radius: 12px;
+      border-radius: 14px;
       border: 1px solid #334155;
       background: #0b1220;
       color: white;
+      padding: 15px 14px;
       font-size: 17px;
-      box-sizing: border-box;
+      outline: none;
       margin-bottom: 12px;
+    }
+
+    input:focus {
+      border-color: #3b82f6;
+    }
+
+    .input-wrap {
+      margin-top: 14px;
+      display: none;
     }
 
     .card {
       background: #0b1220;
       border: 1px solid #1f2937;
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 16px;
       margin-bottom: 14px;
     }
 
     .card h3 {
-      margin: 0 0 8px;
-      font-size: 19px;
+      margin: 0 0 10px;
+      font-size: 20px;
+      line-height: 1.3;
     }
 
     .card p {
-      margin: 6px 0;
-      color: #d1d5db;
+      margin: 7px 0;
+      color: #d6deea;
       line-height: 1.45;
+      font-size: 15px;
+    }
+
+    .tag {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #172554;
+      color: #bfdbfe;
+      font-size: 12px;
+      font-weight: 700;
     }
 
     .warning {
-      margin-top: 16px;
-      padding: 14px;
-      background: #1e293b;
-      border-radius: 12px;
-      color: #cbd5e1;
+      margin-top: 18px;
+      background: #162133;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 15px;
+      color: #d4dbe5;
+      line-height: 1.55;
       font-size: 14px;
-      line-height: 1.5;
+    }
+
+    .profile-box {
+      margin: 18px 0 0;
+      background: #182334;
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid #2f3d52;
+    }
+
+    .profile-label {
+      font-size: 13px;
+      color: #9fb0c6;
+      margin-bottom: 6px;
+    }
+
+    .profile-value {
+      font-size: 17px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .summary {
+      color: #cbd5e1;
+      font-size: 15px;
+      line-height: 1.55;
+      margin-bottom: 18px;
+    }
+
+    .result-title {
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    .spacer-12 {
+      height: 12px;
     }
   </style>
 </head>
 <body>
-  <div class="box">
-    <div id="step1" class="step active">
-      <h1>InvestPath AI</h1>
-      <div class="subtitle">Персональный помощник по сценариям инвестирования ваших средств.</div>
-      <div class="buttons">
-        <button onclick="goToStep(2)">Начать</button>
-      </div>
-    </div>
+  <div class="app">
+    <div class="topbar">InvestPath AI · мини-приложение</div>
 
-    <div id="step2" class="step">
-      <div class="question">Как я могу к вам обращаться?</div>
-      <div class="hint">Введите имя, чтобы я персонализировал сценарий.</div>
-      <input id="nameInput" type="text" placeholder="Введите имя">
-      <div class="buttons">
-        <button onclick="saveName()">Продолжить</button>
-      </div>
-    </div>
-
-    <div id="step3" class="step">
-      <div class="question">На какой срок вы планируете инвестировать?</div>
-      <div class="buttons">
-        <button onclick="saveTerm('5 месяцев')">5 месяцев</button>
-        <button onclick="saveTerm('1 год')">1 год</button>
-        <button onclick="saveTerm('2 года')">2 года</button>
-        <button class="secondary" onclick="showCustomTerm()">Другой срок</button>
+    <div class="screen">
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span>Прогресс</span>
+          <span id="progressText">Шаг 1 из 8</span>
+        </div>
+        <div class="progress">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
       </div>
 
-      <div id="customTermWrap" style="display:none; margin-top:14px;">
-        <input id="customTermInput" type="text" placeholder="Например: 8 месяцев">
-        <button onclick="saveCustomTerm()">Сохранить срок</button>
-      </div>
-    </div>
-
-    <div id="step4" class="step">
-      <div class="question">Какую сумму вы планируете инвестировать?</div>
-      <div class="buttons">
-        <button onclick="saveAmount('5 000–10 000 ₽')">5 000–10 000 ₽</button>
-        <button onclick="saveAmount('10 000–30 000 ₽')">10 000–30 000 ₽</button>
-        <button class="secondary" onclick="showCustomAmount()">Другая сумма</button>
+      <div id="step1" class="step active">
+        <div class="brand">InvestPath AI</div>
+        <div class="subtitle">Персональный помощник по сценариям инвестирования ваших средств.</div>
+        <div class="buttons">
+          <button onclick="goToStep(2)">Начать</button>
+        </div>
       </div>
 
-      <div id="customAmountWrap" style="display:none; margin-top:14px;">
-        <input id="customAmountInput" type="text" placeholder="Например: 75 000 ₽">
-        <button onclick="saveCustomAmount()">Сохранить сумму</button>
+      <div id="step2" class="step">
+        <div class="question">Как я могу к вам обращаться?</div>
+        <div class="hint">Введите имя, чтобы сценарий выглядел персонально.</div>
+        <input id="nameInput" type="text" placeholder="Например: Даниил">
+        <div class="buttons">
+          <button onclick="saveName()">Продолжить</button>
+        </div>
       </div>
-    </div>
-<div id="step5" class="step">
-  <div class="question">Какая у вас цель инвестирования?</div>
-  <div class="buttons">
-    <button onclick="saveGoal('Сбережение средств')">Сбережение средств</button>
-    <button onclick="saveGoal('Приумножение капитала')">Приумножение капитала</button>
-    <button class="secondary" onclick="showCustomGoal()">Другая цель</button>
-  </div>
 
-  <div id="customGoalWrap" style="display:none; margin-top:14px;">
-    <input id="customGoalInput" type="text" placeholder="Например: накопить на квартиру">
-    <button onclick="saveCustomGoal()">Сохранить цель</button>
-  </div>
-</div>
-    <div id="step6" class="step">
-      <div class="question">Какой стиль вам ближе?</div>
-      <div class="buttons">
-        <button onclick="saveRisk('Консервативный')">Консервативный</button>
-        <button onclick="saveRisk('Сбалансированный')">Сбалансированный</button>
-        <button onclick="saveRisk('Агрессивный')">Агрессивный</button>
+      <div id="step3" class="step">
+        <div class="question">На какой срок вы планируете инвестировать?</div>
+        <div class="buttons">
+          <button onclick="saveTerm('5 месяцев')">5 месяцев</button>
+          <button onclick="saveTerm('1 год')">1 год</button>
+          <button onclick="saveTerm('2 года')">2 года</button>
+          <button class="secondary" onclick="showCustomTerm()">Другой срок</button>
+        </div>
+
+        <div class="input-wrap" id="customTermWrap">
+          <input id="customTermInput" type="text" placeholder="Например: 8 месяцев">
+          <button onclick="saveCustomTerm()">Сохранить срок</button>
+        </div>
       </div>
-    </div>
 
-    <div id="step7" class="step">
-      <div class="question">Важно</div>
-      <div class="warning">
-        Наш сервис носит информационно-образовательный характер и не является индивидуальной инвестиционной рекомендацией.
-        Перед любыми инвестиционными решениями нужно учитывать личные риски, цели, комиссии брокера и актуальные рыночные цены.
+      <div id="step4" class="step">
+        <div class="question">Какую сумму вы планируете инвестировать?</div>
+        <div class="buttons">
+          <button onclick="saveAmount('5 000–10 000 ₽')">5 000–10 000 ₽</button>
+          <button onclick="saveAmount('10 000–30 000 ₽')">10 000–30 000 ₽</button>
+          <button class="secondary" onclick="showCustomAmount()">Другая сумма</button>
+        </div>
+
+        <div class="input-wrap" id="customAmountWrap">
+          <input id="customAmountInput" type="text" placeholder="Например: 75 000 ₽">
+          <button onclick="saveCustomAmount()">Сохранить сумму</button>
+        </div>
       </div>
-      <div class="buttons" style="margin-top:18px;">
-        <button onclick="showStrategies()">Приступить</button>
+
+      <div id="step5" class="step">
+        <div class="question">Какая у вас цель инвестирования?</div>
+        <div class="buttons">
+          <button onclick="saveGoal('Сбережение средств')">Сбережение средств</button>
+          <button onclick="saveGoal('Приумножение капитала')">Приумножение капитала</button>
+          <button class="secondary" onclick="showCustomGoal()">Другая цель</button>
+        </div>
+
+        <div class="input-wrap" id="customGoalWrap">
+          <input id="customGoalInput" type="text" placeholder="Например: накопить на квартиру">
+          <button onclick="saveCustomGoal()">Сохранить цель</button>
+        </div>
       </div>
-    </div>
 
-    <div id="step8" class="step">
-      <div class="question">Готово, <span id="finalName">друг</span></div>
-      <div class="hint" id="summaryText"></div>
+      <div id="step6" class="step">
+        <div class="question">Какой стиль вам ближе?</div>
+        <div class="hint">Это не инвестрекомендация, а формат подбора примеров стратегии.</div>
+        <div class="buttons">
+          <button onclick="saveRisk('Консервативный')">Консервативный</button>
+          <button onclick="saveRisk('Сбалансированный')">Сбалансированный</button>
+          <button onclick="saveRisk('Агрессивный')">Агрессивный</button>
+        </div>
+      </div>
 
-      <div id="strategyList"></div>
+      <div id="step7" class="step">
+        <div class="question">Важно</div>
+        <div class="warning">
+          Наш сервис носит информационно-образовательный характер и не является индивидуальной инвестиционной рекомендацией.
+          Перед любыми инвестиционными решениями нужно учитывать личные риски, цели, комиссии брокера и актуальные рыночные цены.
+        </div>
+        <div class="spacer-12"></div>
+        <div class="buttons">
+          <button onclick="showStrategies()">Приступить</button>
+        </div>
+      </div>
 
-      <div class="warning">
-        Цены, состав инструментов и доступность бумаг могут отличаться у Сбера, Т-Банка, ВТБ и Альфы.
-        Используйте это как пример сценария, а не как персональную инвестрекомендацию.
+      <div id="step8" class="step">
+        <div class="result-title">Готово, <span id="finalName">друг</span></div>
+        <div class="summary" id="summaryText"></div>
+        <div id="strategyList"></div>
+
+        <div class="warning">
+          Цены, состав инструментов и доступность бумаг могут отличаться у Сбера, Т-Банка, ВТБ и Альфы.
+          Используйте это как пример сценария, а не как персональную инвестиционную рекомендацию.
+        </div>
       </div>
     </div>
   </div>
@@ -236,16 +379,24 @@
     tg.expand();
 
     const profile = {
-  name: "",
-  term: "",
-  amount: "",
-  goal: "",
-  risk: ""
-};
+      name: "",
+      term: "",
+      amount: "",
+      goal: "",
+      risk: ""
+    };
+
+    function updateProgress(step) {
+      const total = 8;
+      const percent = (step / total) * 100;
+      document.getElementById("progressBar").style.width = percent + "%";
+      document.getElementById("progressText").textContent = `Шаг ${step} из ${total}`;
+    }
 
     function goToStep(step) {
       document.querySelectorAll(".step").forEach(el => el.classList.remove("active"));
       document.getElementById("step" + step).classList.add("active");
+      updateProgress(step);
       window.scrollTo(0, 0);
     }
 
@@ -273,9 +424,9 @@
     }
 
     function saveAmount(value) {
-  profile.amount = value;
-  goToStep(5);
-}
+      profile.amount = value;
+      goToStep(5);
+    }
 
     function showCustomAmount() {
       document.getElementById("customAmountWrap").style.display = "block";
@@ -288,119 +439,133 @@
       goToStep(5);
     }
 
-   function saveRisk(value) {
-  profile.risk = value;
-  goToStep(7);
-}
+    function saveGoal(value) {
+      profile.goal = value;
+      goToStep(6);
+    }
 
-function showStrategies() {
-  goToStep(8);
+    function showCustomGoal() {
+      document.getElementById("customGoalWrap").style.display = "block";
+    }
 
-  document.getElementById("finalName").textContent = profile.name || "друг";
-  document.getElementById("summaryText").textContent =
-    `Профиль: срок — ${profile.term}, сумма — ${profile.amount}, цель — ${profile.goal}, стиль — ${profile.risk}. Ниже — примеры сценариев.`;
+    function saveCustomGoal() {
+      const value = document.getElementById("customGoalInput").value.trim();
+      if (!value) return;
+      profile.goal = value;
+      goToStep(6);
+    }
 
-  const list = document.getElementById("strategyList");
+    function saveRisk(value) {
+      profile.risk = value;
+      goToStep(7);
+    }
 
-  let cards = "";
+    function showStrategies() {
+      goToStep(8);
 
-  if (profile.risk === "Консервативный") {
-    cards = `
-      <div class="card">
-        <h3>Стратегия 1 — Защита капитала</h3>
-        <p>Облигации: 70%</p>
-        <p>Денежный рынок / кэш: 20%</p>
-        <p>Акции крупных компаний: 10%</p>
-        <p>Брокеры: Сбер, ВТБ, Альфа, Т-Банк</p>
-      </div>
-      <div class="card">
-        <h3>Стратегия 2 — Спокойный доход</h3>
-        <p>ОФЗ и надёжные облигации: 60%</p>
-        <p>ETF на рынок облигаций: 25%</p>
-        <p>Дивидендные акции: 15%</p>
-        <p>Брокеры: Сбер, Альфа, Т-Банк</p>
-      </div>
-      <div class="card">
-        <h3>Стратегия 3 — Минимальный риск</h3>
-        <p>Короткие облигации: 50%</p>
-        <p>Фонды ликвидности: 40%</p>
-        <p>Акции голубых фишек: 10%</p>
-        <p>Брокеры: ВТБ, Сбер, Т-Банк</p>
-      </div>
-    `;
-  } else if (profile.risk === "Сбалансированный") {
-    cards = `
-      <div class="card">
-        <h3>Стратегия 1 — Баланс роста</h3>
-        <p>ETF и фонды акций: 40%</p>
-        <p>Облигации: 40%</p>
-        <p>Денежный рынок: 20%</p>
-        <p>Брокеры: Сбер, Альфа, Т-Банк</p>
-      </div>
-      <div class="card">
-        <h3>Стратегия 2 — Умеренный рост</h3>
-        <p>Акции крупных компаний: 35%</p>
-        <p>Облигации: 35%</p>
-        <p>Фонды на индекс: 30%</p>
-        <p>Брокеры: Т-Банк, ВТБ, Альфа</p>
-      </div>
-      <div class="card">
-        <h3>Стратегия 3 — Комбинированная</h3>
-        <p>Российские акции: 30%</p>
-        <p>ETF: 30%</p>
-        <p>Облигации: 30%</p>
-        <p>Кэш: 10%</p>
-        <p>Брокеры: Сбер, ВТБ, Альфа</p>
-      </div>
-    `;
-  } else {
-    cards = `
-      <div class="card">
-        <h3>Стратегия 1 — Рост капитала</h3>
-        <p>Акции роста: 60%</p>
-        <p>ETF на индекс: 25%</p>
-        <p>Высокорискованные идеи: 15%</p>
-        <p>Брокеры: Т-Банк, Альфа, Сбер</p>
-      </div>
-      <div class="card">
-        <h3>Стратегия 2 — Агрессивная</h3>
-        <p>Акции: 70%</p>
-        <p>Секторные идеи: 20%</p>
-        <p>Кэш: 10%</p>
-        <p>Брокеры: Т-Банк, ВТБ, Альфа</p>
-      </div>
-      <div class="card">
-        <h3>Стратегия 3 — Максимум роста</h3>
-        <p>Акции и ETF: 80%</p>
-        <p>Спекулятивная часть: 20%</p>
-        <p>Брокеры: Сбер, Т-Банк, Альфа</p>
-      </div>
-    `;
-  }
+      document.getElementById("finalName").textContent = profile.name || "друг";
+      document.getElementById("summaryText").textContent =
+        `Профиль: срок — ${profile.term}, сумма — ${profile.amount}, цель — ${profile.goal}, стиль — ${profile.risk}. Ниже — примеры сценариев.`;
 
-  list.innerHTML = cards;
+      const list = document.getElementById("strategyList");
+      let cards = "";
 
-  tg.MainButton.setText("Получить подробный план");
-  tg.MainButton.show();
-}
-function saveGoal(value) {
-  profile.goal = value;
-  goToStep(6);
-}
+      if (profile.risk === "Консервативный") {
+        cards = `
+          <div class="card">
+            <div class="tag">Вариант 1</div>
+            <h3>Защита капитала</h3>
+            <p>Облигации: 70%</p>
+            <p>Денежный рынок / кэш: 20%</p>
+            <p>Акции крупных компаний: 10%</p>
+            <p>Брокеры: Сбер, ВТБ, Альфа, Т-Банк</p>
+          </div>
+          <div class="card">
+            <div class="tag">Вариант 2</div>
+            <h3>Спокойный доход</h3>
+            <p>ОФЗ и надёжные облигации: 60%</p>
+            <p>ETF на рынок облигаций: 25%</p>
+            <p>Дивидендные акции: 15%</p>
+            <p>Брокеры: Сбер, Альфа, Т-Банк</p>
+          </div>
+          <div class="card">
+            <div class="tag">Вариант 3</div>
+            <h3>Минимальный риск</h3>
+            <p>Короткие облигации: 50%</p>
+            <p>Фонды ликвидности: 40%</p>
+            <p>Акции голубых фишек: 10%</p>
+            <p>Брокеры: ВТБ, Сбер, Т-Банк</p>
+          </div>
+        `;
+      } else if (profile.risk === "Сбалансированный") {
+        cards = `
+          <div class="card">
+            <div class="tag">Вариант 1</div>
+            <h3>Баланс роста</h3>
+            <p>ETF и фонды акций: 40%</p>
+            <p>Облигации: 40%</p>
+            <p>Денежный рынок: 20%</p>
+            <p>Брокеры: Сбер, Альфа, Т-Банк</p>
+          </div>
+          <div class="card">
+            <div class="tag">Вариант 2</div>
+            <h3>Умеренный рост</h3>
+            <p>Акции крупных компаний: 35%</p>
+            <p>Облигации: 35%</p>
+            <p>Фонды на индекс: 30%</p>
+            <p>Брокеры: Т-Банк, ВТБ, Альфа</p>
+          </div>
+          <div class="card">
+            <div class="tag">Вариант 3</div>
+            <h3>Комбинированная</h3>
+            <p>Российские акции: 30%</p>
+            <p>ETF: 30%</p>
+            <p>Облигации: 30%</p>
+            <p>Кэш: 10%</p>
+            <p>Брокеры: Сбер, ВТБ, Альфа</p>
+          </div>
+        `;
+      } else {
+        cards = `
+          <div class="card">
+            <div class="tag">Вариант 1</div>
+            <h3>Рост капитала</h3>
+            <p>Акции роста: 60%</p>
+            <p>ETF на индекс: 25%</p>
+            <p>Высокорискованные идеи: 15%</p>
+            <p>Брокеры: Т-Банк, Альфа, Сбер</p>
+          </div>
+          <div class="card">
+            <div class="tag">Вариант 2</div>
+            <h3>Агрессивная</h3>
+            <p>Акции: 70%</p>
+            <p>Секторные идеи: 20%</p>
+            <p>Кэш: 10%</p>
+            <p>Брокеры: Т-Банк, ВТБ, Альфа</p>
+          </div>
+          <div class="card">
+            <div class="tag">Вариант 3</div>
+            <h3>Максимум роста</h3>
+            <p>Акции и ETF: 80%</p>
+            <p>Спекулятивная часть: 20%</p>
+            <p>Брокеры: Сбер, Т-Банк, Альфа</p>
+          </div>
+        `;
+      }
 
-function showCustomGoal() {
-  document.getElementById("customGoalWrap").style.display = "block";
-}
+      list.innerHTML = cards;
 
-function saveCustomGoal() {
-  const value = document.getElementById("customGoalInput").value.trim();
-  if (!value) return;
-  profile.goal = value;
-  goToStep(6);
-}
+      tg.MainButton.setText("Получить подробный план");
+      tg.MainButton.color = "#2563eb";
+      tg.MainButton.textColor = "#ffffff";
+      tg.MainButton.show();
+    }
+
     tg.MainButton.onClick(function () {
-      tg.showAlert("Дальше можно подключить ChatGPT и персональный разбор стратегии.");
+      tg.showAlert("Следующий этап: можно подключить ChatGPT, чтобы выдавать персональный разбор и более точные сценарии.");
     });
+
+    updateProgress(1);
   </script>
 </body>
 </html>
