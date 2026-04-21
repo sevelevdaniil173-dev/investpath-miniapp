@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InvestPath AI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      margin: 0;
+      padding: 24px;
+    }
+    .box {
+      max-width: 420px;
+      margin: 40px auto;
+      background: #111827;
+      border-radius: 16px;
+      padding: 24px;
+    }
+    h1 {
+      margin-top: 0;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>InvestPath AI</h1>
+    <p>Подбор сценариев инвестирования под ваши цели.</p>
+    <button onclick="startApp()">Начать анализ</button>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+
+    function startApp() {
+      alert("Mini App работает 🚀");
+      const user = tg.initDataUnsafe.user;
+      if (user) {
+        alert("Привет, " + user.first_name);
+      }
+    }
+  </script>
+</body>
+</html>
