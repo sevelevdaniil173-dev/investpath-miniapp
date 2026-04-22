@@ -268,6 +268,8 @@
     const progressBar = document.getElementById("progressBar");
     const progressText = document.getElementById("progressText");
 
+    const API_URL = "https://YOUR-BACKEND-URL.onrender.com/analyze";
+
     const profile = {
       name: "",
       term: "",
@@ -278,11 +280,9 @@
       portfolio: ""
     };
 
-    let currentStep = 1;
     const totalSteps = 7;
 
     function updateProgress(step) {
-      currentStep = step;
       progressText.textContent = `Шаг ${step} из ${totalSteps}`;
       progressBar.style.width = `${(step / totalSteps) * 100}%`;
     }
@@ -367,9 +367,7 @@
       };
 
       input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          button.click();
-        }
+        if (e.key === "Enter") button.click();
       });
 
       wrap.appendChild(input);
@@ -377,7 +375,6 @@
       chat.appendChild(wrap);
       input.focus();
       scrollChat();
-      return wrap;
     }
 
     function addResultCard(title, lines, tagText) {
@@ -385,9 +382,7 @@
       card.className = "result-card";
 
       let html = "";
-      if (tagText) {
-        html += `<div class="tag">${tagText}</div>`;
-      }
+      if (tagText) html += `<div class="tag">${tagText}</div>`;
       html += `<h3>${title}</h3>`;
       lines.forEach(line => {
         html += `<p>${line}</p>`;
@@ -450,6 +445,30 @@
       };
     }
 
+    async function requestGPTAnalysis() {
+      await addTyping(2500);
+      addBotMessage("Сейчас подготовлю персональный разбор выбранного варианта.");
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(buildUserProfileJSON())
+        });
+
+        if (!response.ok) {
+          throw new Error("Ошибка ответа сервера");
+        }
+
+        const data = await response.json();
+        addBotMessage(data.analysis || "Не удалось получить разбор.");
+      } catch (error) {
+        addBotMessage("Не удалось подключиться к AI-анализу. Проверь backend и URL сервера.");
+      }
+    }
+
     async function startFlow() {
       updateProgress(1);
       await addTyping(2500);
@@ -480,30 +499,9 @@
       addBotMessage(`Приятно познакомиться, ${profile.name}.\n\nНа какой срок вы планируете инвестировать?`);
 
       addChoices([
-        {
-          text: "5 месяцев",
-          onClick: () => {
-            profile.term = "5 месяцев";
-            addUserMessage("5 месяцев");
-            askAmount();
-          }
-        },
-        {
-          text: "1 год",
-          onClick: () => {
-            profile.term = "1 год";
-            addUserMessage("1 год");
-            askAmount();
-          }
-        },
-        {
-          text: "2 года",
-          onClick: () => {
-            profile.term = "2 года";
-            addUserMessage("2 года");
-            askAmount();
-          }
-        },
+        { text: "5 месяцев", onClick: () => { profile.term = "5 месяцев"; addUserMessage("5 месяцев"); askAmount(); } },
+        { text: "1 год", onClick: () => { profile.term = "1 год"; addUserMessage("1 год"); askAmount(); } },
+        { text: "2 года", onClick: () => { profile.term = "2 года"; addUserMessage("2 года"); askAmount(); } },
         {
           text: "Другой срок",
           secondary: true,
@@ -525,22 +523,8 @@
       addBotMessage("Какую сумму вы планируете инвестировать?");
 
       addChoices([
-        {
-          text: "5 000–10 000 рублей",
-          onClick: () => {
-            profile.amount = "5 000–10 000 рублей";
-            addUserMessage("5 000–10 000 рублей");
-            askGoal();
-          }
-        },
-        {
-          text: "10 000–30 000 рублей",
-          onClick: () => {
-            profile.amount = "10 000–30 000 рублей";
-            addUserMessage("10 000–30 000 рублей");
-            askGoal();
-          }
-        },
+        { text: "5 000–10 000 рублей", onClick: () => { profile.amount = "5 000–10 000 рублей"; addUserMessage("5 000–10 000 рублей"); askGoal(); } },
+        { text: "10 000–30 000 рублей", onClick: () => { profile.amount = "10 000–30 000 рублей"; addUserMessage("10 000–30 000 рублей"); askGoal(); } },
         {
           text: "Другая сумма",
           secondary: true,
@@ -562,22 +546,8 @@
       addBotMessage("Какая у вас цель инвестирования?");
 
       addChoices([
-        {
-          text: "Сбережение средств",
-          onClick: () => {
-            profile.goal = "Сбережение средств";
-            addUserMessage("Сбережение средств");
-            askRisk();
-          }
-        },
-        {
-          text: "Приумножение капитала",
-          onClick: () => {
-            profile.goal = "Приумножение капитала";
-            addUserMessage("Приумножение капитала");
-            askRisk();
-          }
-        },
+        { text: "Сбережение средств", onClick: () => { profile.goal = "Сбережение средств"; addUserMessage("Сбережение средств"); askRisk(); } },
+        { text: "Приумножение капитала", onClick: () => { profile.goal = "Приумножение капитала"; addUserMessage("Приумножение капитала"); askRisk(); } },
         {
           text: "Другое",
           secondary: true,
@@ -599,30 +569,9 @@
       addBotMessage("Какой стиль стратегии вам ближе?");
 
       addChoices([
-        {
-          text: "Консервативный",
-          onClick: () => {
-            profile.risk = "Консервативный";
-            addUserMessage("Консервативный");
-            showDisclaimer();
-          }
-        },
-        {
-          text: "Сбалансированный",
-          onClick: () => {
-            profile.risk = "Сбалансированный";
-            addUserMessage("Сбалансированный");
-            showDisclaimer();
-          }
-        },
-        {
-          text: "Агрессивный",
-          onClick: () => {
-            profile.risk = "Агрессивный";
-            addUserMessage("Агрессивный");
-            showDisclaimer();
-          }
-        }
+        { text: "Консервативный", onClick: () => { profile.risk = "Консервативный"; addUserMessage("Консервативный"); showDisclaimer(); } },
+        { text: "Сбалансированный", onClick: () => { profile.risk = "Сбалансированный"; addUserMessage("Сбалансированный"); showDisclaimer(); } },
+        { text: "Агрессивный", onClick: () => { profile.risk = "Агрессивный"; addUserMessage("Агрессивный"); showDisclaimer(); } }
       ]);
     }
 
@@ -647,10 +596,7 @@
       updateProgress(7);
       await addTyping();
 
-      addBotMessage(
-        `Отлично, ${profile.name}.\n\n` +
-        `Вот как выглядит ваш инвестиционный профиль:`
-      );
+      addBotMessage(`Отлично, ${profile.name}.\n\nВот как выглядит ваш инвестиционный профиль:`);
 
       addResultCard("Ваш профиль", [
         `Срок: ${profile.term}`,
@@ -677,95 +623,17 @@
       addBotMessage("Выберите одну из 3 стратегий.");
 
       if (profile.risk === "Консервативный") {
-        addStrategyCard(
-          "Консервативная стратегия",
-          [
-            "Ниже риск",
-            "Фокус на сохранении капитала",
-            "Подходит для осторожного подхода"
-          ],
-          "conservative"
-        );
-
-        addStrategyCard(
-          "Умеренно-консервативная стратегия",
-          [
-            "Баланс стабильности и доходности",
-            "Чуть больше инструментов",
-            "Подходит для спокойного роста"
-          ],
-          "moderate_conservative"
-        );
-
-        addStrategyCard(
-          "Доходная консервативная стратегия",
-          [
-            "Упор на стабильный денежный поток",
-            "Больше облигационных идей",
-            "Для долгого горизонта"
-          ],
-          "income_conservative"
-        );
+        addStrategyCard("Консервативная стратегия", ["Ниже риск", "Фокус на сохранении капитала", "Подходит для осторожного подхода"], "conservative");
+        addStrategyCard("Умеренно-консервативная стратегия", ["Баланс стабильности и доходности", "Чуть больше инструментов", "Подходит для спокойного роста"], "moderate_conservative");
+        addStrategyCard("Доходная консервативная стратегия", ["Упор на стабильный денежный поток", "Больше облигационных идей", "Для долгого горизонта"], "income_conservative");
       } else if (profile.risk === "Сбалансированный") {
-        addStrategyCard(
-          "Сбалансированная стратегия",
-          [
-            "Баланс роста и защиты",
-            "Подходит для большинства сценариев",
-            "Средняя волатильность"
-          ],
-          "balanced"
-        );
-
-        addStrategyCard(
-          "Стратегия умеренного роста",
-          [
-            "Чуть больше акций и ETF",
-            "Более выраженный потенциал роста",
-            "Для среднего горизонта"
-          ],
-          "growth_balanced"
-        );
-
-        addStrategyCard(
-          "Диверсифицированная стратегия",
-          [
-            "Шире набор инструментов",
-            "Упор на распределение риска",
-            "Подходит для гибкого подхода"
-          ],
-          "diversified_balanced"
-        );
+        addStrategyCard("Сбалансированная стратегия", ["Баланс роста и защиты", "Подходит для большинства сценариев", "Средняя волатильность"], "balanced");
+        addStrategyCard("Стратегия умеренного роста", ["Чуть больше акций и ETF", "Более выраженный потенциал роста", "Для среднего горизонта"], "growth_balanced");
+        addStrategyCard("Диверсифицированная стратегия", ["Шире набор инструментов", "Упор на распределение риска", "Подходит для гибкого подхода"], "diversified_balanced");
       } else {
-        addStrategyCard(
-          "Агрессивная стратегия",
-          [
-            "Максимальный потенциал роста",
-            "Выше волатильность",
-            "Для готовых к риску"
-          ],
-          "aggressive"
-        );
-
-        addStrategyCard(
-          "Стратегия активного роста",
-          [
-            "Больше доля акций и ETF",
-            "Подходит для длинного горизонта",
-            "Выше рыночные колебания"
-          ],
-          "active_growth"
-        );
-
-        addStrategyCard(
-          "Высокодоходная стратегия",
-          [
-            "Самый рискованный вариант",
-            "Фокус на максимальный upside",
-            "Подходит не всем"
-          ],
-          "high_return"
-        );
+        addStrategyCard("Агрессивная стратегия", ["Максимальный потенциал роста", "Выше волатильность", "Для готовых к риску"], "aggressive");
+        addStrategyCard("Стратегия активного роста", ["Больше доля акций и ETF", "Подходит для длинного горизонта", "Выше рыночные колебания"], "active_growth");
+        addStrategyCard("Высокодоходная стратегия", ["Самый рискованный вариант", "Фокус на максимальный upside", "Подходит не всем"], "high_return");
       }
 
       tg.MainButton.hide();
@@ -783,38 +651,9 @@
     }
 
     function showPortfolios(strategyKey) {
-      addPortfolioCard(
-        "Портфель 1",
-        [
-          "Минимальный вход",
-          "Более простой состав",
-          "Подходит для аккуратного старта"
-        ],
-        strategyKey,
-        "portfolio_1"
-      );
-
-      addPortfolioCard(
-        "Портфель 2",
-        [
-          "Лучший баланс состава",
-          "Более интересная диверсификация",
-          "Подходит как основной вариант"
-        ],
-        strategyKey,
-        "portfolio_2"
-      );
-
-      addPortfolioCard(
-        "Портфель 3",
-        [
-          "Больше инструментов внутри",
-          "Выше потенциальная сложность",
-          "Для более уверенного пользователя"
-        ],
-        strategyKey,
-        "portfolio_3"
-      );
+      addPortfolioCard("Портфель 1", ["Минимальный вход", "Более простой состав", "Подходит для аккуратного старта"], strategyKey, "portfolio_1");
+      addPortfolioCard("Портфель 2", ["Лучший баланс состава", "Более интересная диверсификация", "Подходит как основной вариант"], strategyKey, "portfolio_2");
+      addPortfolioCard("Портфель 3", ["Больше инструментов внутри", "Выше потенциальная сложность", "Для более уверенного пользователя"], strategyKey, "portfolio_3");
     }
 
     function selectPortfolio(strategyKey, portfolioKey, portfolioTitle) {
@@ -829,76 +668,27 @@
 
       if (strategyKey.includes("conservative")) {
         if (portfolioKey === "portfolio_1") {
-          lines = [
-            "ОФЗ и облигации: 70%",
-            "Фонд ликвидности: 20%",
-            "Акции крупных компаний: 10%",
-            "Брокеры: Сбер, ВТБ, Альфа, Т-Банк"
-          ];
+          lines = ["ОФЗ и облигации: 70%", "Фонд ликвидности: 20%", "Акции крупных компаний: 10%", "Брокеры: Сбер, ВТБ, Альфа, Т-Банк"];
         } else if (portfolioKey === "portfolio_2") {
-          lines = [
-            "ОФЗ: 50%",
-            "Корпоративные облигации: 25%",
-            "ETF на облигации: 15%",
-            "Акции голубых фишек: 10%",
-            "Брокеры: Сбер, Альфа, Т-Банк"
-          ];
+          lines = ["ОФЗ: 50%", "Корпоративные облигации: 25%", "ETF на облигации: 15%", "Акции голубых фишек: 10%", "Брокеры: Сбер, Альфа, Т-Банк"];
         } else {
-          lines = [
-            "ОФЗ: 40%",
-            "Корпоративные облигации: 30%",
-            "Фонд денежного рынка: 10%",
-            "Дивидендные акции: 20%",
-            "Брокеры: ВТБ, Сбер, Т-Банк"
-          ];
+          lines = ["ОФЗ: 40%", "Корпоративные облигации: 30%", "Фонд денежного рынка: 10%", "Дивидендные акции: 20%", "Брокеры: ВТБ, Сбер, Т-Банк"];
         }
       } else if (strategyKey.includes("balanced")) {
         if (portfolioKey === "portfolio_1") {
-          lines = [
-            "ETF на индекс: 35%",
-            "Облигации: 40%",
-            "Фонд ликвидности: 25%",
-            "Брокеры: Сбер, Альфа, Т-Банк"
-          ];
+          lines = ["ETF на индекс: 35%", "Облигации: 40%", "Фонд ликвидности: 25%", "Брокеры: Сбер, Альфа, Т-Банк"];
         } else if (portfolioKey === "portfolio_2") {
-          lines = [
-            "ETF: 30%",
-            "Акции крупных компаний: 25%",
-            "Облигации: 30%",
-            "Фонд ликвидности: 15%",
-            "Брокеры: Т-Банк, ВТБ, Альфа"
-          ];
+          lines = ["ETF: 30%", "Акции крупных компаний: 25%", "Облигации: 30%", "Фонд ликвидности: 15%", "Брокеры: Т-Банк, ВТБ, Альфа"];
         } else {
-          lines = [
-            "Акции: 35%",
-            "ETF: 25%",
-            "Облигации: 25%",
-            "Ликвидность: 15%",
-            "Брокеры: Сбер, ВТБ, Альфа"
-          ];
+          lines = ["Акции: 35%", "ETF: 25%", "Облигации: 25%", "Ликвидность: 15%", "Брокеры: Сбер, ВТБ, Альфа"];
         }
       } else {
         if (portfolioKey === "portfolio_1") {
-          lines = [
-            "Акции роста: 50%",
-            "ETF на индекс: 30%",
-            "Кэш: 20%",
-            "Брокеры: Т-Банк, Альфа, Сбер"
-          ];
+          lines = ["Акции роста: 50%", "ETF на индекс: 30%", "Кэш: 20%", "Брокеры: Т-Банк, Альфа, Сбер"];
         } else if (portfolioKey === "portfolio_2") {
-          lines = [
-            "Акции роста: 60%",
-            "ETF: 25%",
-            "Идеи повышенного риска: 15%",
-            "Брокеры: Т-Банк, Альфа, Сбер"
-          ];
+          lines = ["Акции роста: 60%", "ETF: 25%", "Идеи повышенного риска: 15%", "Брокеры: Т-Банк, Альфа, Сбер"];
         } else {
-          lines = [
-            "Акции и ETF: 70%",
-            "Секторальные идеи: 20%",
-            "Кэш: 10%",
-            "Брокеры: Сбер, Т-Банк, Альфа"
-          ];
+          lines = ["Акции и ETF: 70%", "Секторальные идеи: 20%", "Кэш: 10%", "Брокеры: Сбер, Т-Банк, Альфа"];
         }
       }
 
@@ -909,13 +699,18 @@
 
       addChoices([
         {
+          text: "Запросить AI-разбор",
+          onClick: () => {
+            addUserMessage("Запросить AI-разбор");
+            requestGPTAnalysis();
+          }
+        },
+        {
           text: "Начать заново",
           secondary: true,
           onClick: () => location.reload()
         }
       ]);
-
-      console.log(buildUserProfileJSON());
 
       tg.MainButton.setText("Получить подробный план");
       tg.MainButton.color = "#2563eb";
@@ -924,7 +719,7 @@
     }
 
     tg.MainButton.onClick(function () {
-      tg.showAlert("Следующий этап: можно подключить ChatGPT для персонального разбора стратегии, генерации точного плана и подбора инструментов под бюджет.");
+      tg.showAlert("Кнопка уже готова. После подключения backend она может открывать подробный AI-план.");
     });
 
     startFlow();
