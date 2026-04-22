@@ -28,7 +28,7 @@
       border: 1px solid #23314b;
       border-radius: 24px;
       overflow: hidden;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
     }
 
     .topbar {
@@ -57,7 +57,7 @@
       flex-direction: column;
       gap: 12px;
       background:
-        radial-gradient(circle at top, rgba(37,99,235,0.09), transparent 32%),
+        radial-gradient(circle at top, rgba(37, 99, 235, 0.09), transparent 32%),
         #0f172a;
     }
 
@@ -84,6 +84,11 @@
       background: #2f67ea;
       border-bottom-right-radius: 8px;
       color: white;
+    }
+
+    .typing {
+      opacity: 0.72;
+      font-style: italic;
     }
 
     .choices {
@@ -156,18 +161,20 @@
     }
 
     .result-card {
-      background: #0b1220;
+      background: linear-gradient(180deg, #0b1220 0%, #101a2d 100%);
       border: 1px solid #243146;
       border-radius: 18px;
       padding: 16px;
       margin-top: 6px;
       animation: fadeIn 0.18s ease;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     }
 
     .result-card h3 {
       margin: 0 0 10px;
       font-size: 20px;
       line-height: 1.3;
+      color: #ffffff;
     }
 
     .result-card p {
@@ -180,8 +187,8 @@
     .tag {
       display: inline-block;
       margin-bottom: 10px;
-      background: #172554;
-      color: #bfdbfe;
+      background: linear-gradient(90deg, #172554 0%, #1d4ed8 100%);
+      color: #dbeafe;
       font-size: 12px;
       font-weight: 700;
       padding: 6px 10px;
@@ -308,6 +315,21 @@
       return msg;
     }
 
+    function addTyping(delay = 700) {
+      const msg = document.createElement("div");
+      msg.className = "msg bot typing";
+      msg.textContent = "Печатает...";
+      chat.appendChild(msg);
+      scrollChat();
+
+      return new Promise(resolve => {
+        setTimeout(() => {
+          msg.remove();
+          resolve();
+        }, delay);
+      });
+    }
+
     function addChoices(buttons) {
       const wrap = document.createElement("div");
       wrap.className = "choices";
@@ -420,9 +442,9 @@
       scrollChat();
     }
 
-    function startFlow() {
+    async function startFlow() {
       updateProgress(1);
-
+      await addTyping(500);
       addBotMessage("Привет. Это персональный советчик по сценариям инвестирования ваших средств.");
 
       addChoices([
@@ -433,8 +455,9 @@
       ]);
     }
 
-    function askName() {
+    async function askName() {
       updateProgress(1);
+      await addTyping();
       addBotMessage("Как я могу к вам обращаться?");
       addInput("Введите имя", (value) => {
         profile.name = value;
@@ -443,8 +466,9 @@
       }, "Сохранить имя");
     }
 
-    function askTerm() {
+    async function askTerm() {
       updateProgress(2);
+      await addTyping();
       addBotMessage(`Приятно познакомиться, ${profile.name}.\n\nНа какой срок вы планируете инвестировать?`);
 
       addChoices([
@@ -487,8 +511,9 @@
       ]);
     }
 
-    function askAmount() {
+    async function askAmount() {
       updateProgress(3);
+      await addTyping();
       addBotMessage("Какую сумму вы планируете инвестировать?");
 
       addChoices([
@@ -523,8 +548,9 @@
       ]);
     }
 
-    function askGoal() {
+    async function askGoal() {
       updateProgress(4);
+      await addTyping();
       addBotMessage("Какая у вас цель инвестирования?");
 
       addChoices([
@@ -559,8 +585,9 @@
       ]);
     }
 
-    function askRisk() {
+    async function askRisk() {
       updateProgress(5);
+      await addTyping();
       addBotMessage("Какой стиль стратегии вам ближе?");
 
       addChoices([
@@ -591,8 +618,9 @@
       ]);
     }
 
-    function showDisclaimer() {
+    async function showDisclaimer() {
       updateProgress(6);
+      await addTyping();
       addBotMessage("Важно: наш сервис не является индивидуальной инвестиционной рекомендацией.");
       addWarning("Информация в приложении носит информационно-образовательный характер. Перед инвестиционными решениями учитывайте личные риски, комиссии брокеров, горизонт инвестирования и рыночные условия.");
 
@@ -607,9 +635,9 @@
       ]);
     }
 
-    function showStrategies() {
+    async function showStrategies() {
       updateProgress(7);
-
+      await addTyping();
       addBotMessage(
         `Готово, ${profile.name}.\n\n` +
         `Я учёл ваш профиль:\n` +
@@ -718,7 +746,6 @@
     function selectStrategy(strategyKey, strategyTitle) {
       profile.strategy = strategyKey;
       addUserMessage(strategyTitle);
-
       addBotMessage(`Вы выбрали: ${strategyTitle}.\n\nТеперь я подготовил 3 портфеля под ваш бюджет.`);
       showPortfolios(strategyKey);
     }
@@ -761,8 +788,7 @@
     function selectPortfolio(strategyKey, portfolioKey, portfolioTitle) {
       profile.portfolio = portfolioKey;
       addUserMessage(portfolioTitle);
-
-      addBotMessage(`Вы выбрали ${portfolioTitle}.\n\nВот пример состава под ваш профиль:`);
+      addBotMessage(`Вы выбрали ${portfolioTitle}.\n\nНиже — примерный состав под ваш профиль:`);
       showPortfolioDetails(strategyKey, portfolioKey);
     }
 
@@ -844,9 +870,17 @@
         }
       }
 
-      addResultCard("Пример состава", lines, "Состав");
+      addResultCard("Состав портфеля", lines, "Под ваш сценарий");
 
       addWarning("Это примерный учебный портфель, а не индивидуальная инвестиционная рекомендация. Перед покупкой проверьте актуальные цены, комиссии и доступность инструментов у брокера.");
+
+      addChoices([
+        {
+          text: "Начать заново",
+          secondary: true,
+          onClick: () => location.reload()
+        }
+      ]);
 
       tg.MainButton.setText("Получить подробный план");
       tg.MainButton.color = "#2563eb";
