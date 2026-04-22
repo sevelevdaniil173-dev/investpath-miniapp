@@ -238,10 +238,6 @@
         transform: translateY(0);
       }
     }
-
-    .hidden {
-      display: none !important;
-    }
   </style>
 </head>
 <body>
@@ -315,7 +311,7 @@
       return msg;
     }
 
-    function addTyping(delay = 700) {
+    function addTyping(delay = 2500) {
       const msg = document.createElement("div");
       msg.className = "msg bot typing";
       msg.textContent = "Печатает...";
@@ -442,9 +438,21 @@
       scrollChat();
     }
 
+    function buildUserProfileJSON() {
+      return {
+        name: profile.name,
+        term: profile.term,
+        amount: profile.amount,
+        goal: profile.goal,
+        risk: profile.risk,
+        strategy: profile.strategy,
+        portfolio: profile.portfolio
+      };
+    }
+
     async function startFlow() {
       updateProgress(1);
-      await addTyping(500);
+      await addTyping(2500);
       addBotMessage("Привет. Это персональный советчик по сценариям инвестирования ваших средств.");
 
       addChoices([
@@ -629,6 +637,35 @@
           text: "Приступить",
           onClick: () => {
             addUserMessage("Приступить");
+            showProfile();
+          }
+        }
+      ]);
+    }
+
+    async function showProfile() {
+      updateProgress(7);
+      await addTyping();
+
+      addBotMessage(
+        `Отлично, ${profile.name}.\n\n` +
+        `Вот как выглядит ваш инвестиционный профиль:`
+      );
+
+      addResultCard("Ваш профиль", [
+        `Срок: ${profile.term}`,
+        `Сумма: ${profile.amount}`,
+        `Цель: ${profile.goal}`,
+        `Стиль: ${profile.risk}`
+      ], "Профиль");
+
+      addBotMessage("На основе этого профиля я подготовил для вас 3 стратегии.");
+
+      addChoices([
+        {
+          text: "Посмотреть стратегии",
+          onClick: () => {
+            addUserMessage("Посмотреть стратегии");
             showStrategies();
           }
         }
@@ -636,17 +673,8 @@
     }
 
     async function showStrategies() {
-      updateProgress(7);
       await addTyping();
-      addBotMessage(
-        `Готово, ${profile.name}.\n\n` +
-        `Я учёл ваш профиль:\n` +
-        `• Срок: ${profile.term}\n` +
-        `• Сумма: ${profile.amount}\n` +
-        `• Цель: ${profile.goal}\n` +
-        `• Стиль: ${profile.risk}\n\n` +
-        `Выберите одну из 3 стратегий.`
-      );
+      addBotMessage("Выберите одну из 3 стратегий.");
 
       if (profile.risk === "Консервативный") {
         addStrategyCard(
@@ -746,7 +774,11 @@
     function selectStrategy(strategyKey, strategyTitle) {
       profile.strategy = strategyKey;
       addUserMessage(strategyTitle);
-      addBotMessage(`Вы выбрали: ${strategyTitle}.\n\nТеперь я подготовил 3 портфеля под ваш бюджет.`);
+
+      addBotMessage(
+        `Вы выбрали: ${strategyTitle}.\n\n` +
+        `Я сформировал 3 варианта портфелей, которые соответствуют вашему профилю и бюджету.`
+      );
       showPortfolios(strategyKey);
     }
 
@@ -870,6 +902,7 @@
         }
       }
 
+      addBotMessage("Ниже — примерный состав выбранного портфеля под ваш профиль.");
       addResultCard("Состав портфеля", lines, "Под ваш сценарий");
 
       addWarning("Это примерный учебный портфель, а не индивидуальная инвестиционная рекомендация. Перед покупкой проверьте актуальные цены, комиссии и доступность инструментов у брокера.");
@@ -881,6 +914,8 @@
           onClick: () => location.reload()
         }
       ]);
+
+      console.log(buildUserProfileJSON());
 
       tg.MainButton.setText("Получить подробный план");
       tg.MainButton.color = "#2563eb";
