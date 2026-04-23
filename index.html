@@ -95,6 +95,12 @@
       color: #d9e5f6;
     }
 
+    button.ghost {
+      background: #13233d;
+      border: 1px solid #37507a;
+      color: #dce8ff;
+    }
+
     button:disabled {
       opacity: 0.6;
       cursor: not-allowed;
@@ -118,7 +124,8 @@
 
     .portfolio-card,
     .ai-variant-card,
-    .scenario-card {
+    .scenario-card,
+    .scenario-detail-card {
       background: #0b1220;
       border: 1px solid #22304a;
       border-radius: 14px;
@@ -128,7 +135,8 @@
 
     .portfolio-card h4,
     .ai-variant-card h4,
-    .scenario-card h4 {
+    .scenario-card h4,
+    .scenario-detail-card h4 {
       margin: 0 0 6px;
       font-size: 17px;
       color: #fff;
@@ -143,14 +151,12 @@
     }
 
     .portfolio-list,
-    .ai-variant-list,
     .instrument-list {
       margin: 0;
       padding-left: 18px;
     }
 
     .portfolio-list li,
-    .ai-variant-list li,
     .instrument-list li {
       margin-bottom: 6px;
       color: #dbe4f0;
@@ -254,6 +260,30 @@
       margin-bottom: 8px;
       color: #ffffff;
     }
+
+    .scenario-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .scenario-badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #132a50;
+      border: 1px solid #34548b;
+      color: #dce8ff;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .preview-lock {
+      color: #f7d58c;
+      font-size: 13px;
+      margin-top: 8px;
+    }
   </style>
 </head>
 <body>
@@ -325,7 +355,9 @@
           <div id="aiVariantsList"></div>
 
           <div class="section-title">Сценарии поведения портфеля</div>
-          <div id="scenarioList"></div>
+          <div id="scenarioButtons" class="scenario-actions"></div>
+
+          <div id="scenarioDetailBox" class="hidden"></div>
 
           <div id="proOfferBox" class="pro-offer hidden">
             <div class="pro-offer-title" id="proOfferTitle">Нужно больше вариантов?</div>
@@ -361,6 +393,7 @@
     let currentStep = 0;
     let awaitingText = null;
     let awaitingCustom = null;
+    let scenarioData = null;
     const totalSteps = 7;
 
     const strategyData = {
@@ -834,8 +867,11 @@
       document.getElementById("aiAnalysisBox").textContent = "";
       document.getElementById("aiVariantsWrap").classList.add("hidden");
       document.getElementById("aiVariantsList").innerHTML = "";
-      document.getElementById("scenarioList").innerHTML = "";
+      document.getElementById("scenarioButtons").innerHTML = "";
+      document.getElementById("scenarioDetailBox").innerHTML = "";
+      document.getElementById("scenarioDetailBox").classList.add("hidden");
       document.getElementById("proOfferBox").classList.add("hidden");
+      scenarioData = null;
     }
 
     function renderVariantBlocks(blocks) {
@@ -852,27 +888,86 @@
       return html;
     }
 
-    function renderScenarios(scenarios) {
-      const list = document.getElementById("scenarioList");
-      list.innerHTML = "";
+    function renderScenarioButtons(scenarios) {
+      scenarioData = scenarios || {};
+      const wrap = document.getElementById("scenarioButtons");
+      wrap.innerHTML = "";
 
-      const config = [
-        { key: "base", title: "Базовый сценарий", subtitle: "Если рынок движется в текущей логике" },
-        { key: "safe", title: "Осторожный сценарий", subtitle: "Если внешние условия ухудшаются" },
-        { key: "positive", title: "Позитивный сценарий", subtitle: "Если рынок поддерживает рост" }
+      const buttons = [
+        {
+          key: "base",
+          label: "Базовый сценарий",
+          type: "free"
+        },
+        {
+          key: "safe",
+          label: "Осторожный сценарий",
+          type: "pro"
+        },
+        {
+          key: "positive",
+          label: "Позитивный сценарий",
+          type: "pro"
+        }
       ];
 
-      config.forEach(item => {
-        if (!scenarios || !scenarios[item.key]) return;
-        const card = document.createElement("div");
-        card.className = "scenario-card";
-        card.innerHTML = `
-          <h4>${item.title}</h4>
-          <div class="scenario-subtitle">${item.subtitle}</div>
-          <div class="muted">${scenarios[item.key]}</div>
-        `;
-        list.appendChild(card);
+      buttons.forEach(item => {
+        const btn = document.createElement("button");
+        btn.className = item.type === "free" ? "ghost" : "secondary";
+        btn.textContent = item.type === "free" ? item.label : `${item.label} · PRO`;
+        btn.onclick = () => openScenario(item.key, item.type);
+        wrap.appendChild(btn);
       });
+    }
+
+    function openScenario(key, type) {
+      const box = document.getElementById("scenarioDetailBox");
+      box.classList.remove("hidden");
+
+      if (type === "free") {
+        box.innerHTML = `
+          <div class="scenario-detail-card">
+            <div class="scenario-badge">Бесплатно</div>
+            <h4>Базовый сценарий</h4>
+            <div class="scenario-subtitle">Что вероятнее всего при текущих условиях</div>
+            <div class="muted">${scenarioData.base || "Базовый сценарий временно недоступен."}</div>
+            <div class="instrument-block">
+              <div class="instrument-block-title">Что делать в этом сценарии</div>
+              <ul class="instrument-list">
+                <li>Соблюдать выбранную структуру без резких изменений</li>
+                <li>Инвестировать поэтапно, а не одной точкой</li>
+                <li>Пересматривать портфель раз в 3–6 месяцев</li>
+              </ul>
+            </div>
+          </div>
+        `;
+      } else if (key === "safe") {
+        box.innerHTML = `
+          <div class="scenario-detail-card">
+            <div class="scenario-badge">Preview PRO</div>
+            <h4>Осторожный сценарий</h4>
+            <div class="scenario-subtitle">Что будет, если рынок ухудшится</div>
+            <div class="muted">${scenarioData.safe || "Осторожный сценарий временно недоступен."}</div>
+            <div class="preview-lock">Полный разбор сценария, действия по защите портфеля и расширенная аналитика доступны в PRO.</div>
+            <div class="buttons">
+              <button class="secondary" onclick="openProOffer()">Открыть PRO</button>
+            </div>
+          </div>
+        `;
+      } else if (key === "positive") {
+        box.innerHTML = `
+          <div class="scenario-detail-card">
+            <div class="scenario-badge">Preview PRO</div>
+            <h4>Позитивный сценарий</h4>
+            <div class="scenario-subtitle">Что будет, если рынок поддержит рост</div>
+            <div class="muted">${scenarioData.positive || "Позитивный сценарий временно недоступен."}</div>
+            <div class="preview-lock">Полный разбор сценария роста, действия по ребалансировке и расширенный план доступны в PRO.</div>
+            <div class="buttons">
+              <button class="secondary" onclick="openProOffer()">Открыть PRO</button>
+            </div>
+          </div>
+        `;
+      }
     }
 
     async function requestAiAnalysis() {
@@ -890,7 +985,9 @@
 
       aiVariantsWrap.classList.add("hidden");
       aiVariantsList.innerHTML = "";
-      document.getElementById("scenarioList").innerHTML = "";
+      document.getElementById("scenarioButtons").innerHTML = "";
+      document.getElementById("scenarioDetailBox").innerHTML = "";
+      document.getElementById("scenarioDetailBox").classList.add("hidden");
       proOfferBox.classList.add("hidden");
 
       try {
@@ -930,7 +1027,7 @@
           }
 
           if (data.scenarios) {
-            renderScenarios(data.scenarios);
+            renderScenarioButtons(data.scenarios);
           }
 
           if (data.pro_offer) {
@@ -948,9 +1045,9 @@
 
     function openProOffer() {
       if (window.Telegram && Telegram.WebApp) {
-        Telegram.WebApp.showAlert("Здесь можно будет открыть платную PRO-версию с расширенным подбором портфелей и сценариев.");
+        Telegram.WebApp.showAlert("Здесь можно будет открыть платную PRO-версию с расширенным подбором портфелей и полным разбором сценариев.");
       } else {
-        alert("Здесь можно будет открыть платную PRO-версию с расширенным подбором портфелей и сценариев.");
+        alert("Здесь можно будет открыть платную PRO-версию с расширенным подбором портфелей и полным разбором сценариев.");
       }
     }
   </script>
