@@ -117,7 +117,8 @@
     }
 
     .portfolio-card,
-    .ai-variant-card {
+    .ai-variant-card,
+    .scenario-card {
       background: #0b1220;
       border: 1px solid #22304a;
       border-radius: 14px;
@@ -126,27 +127,31 @@
     }
 
     .portfolio-card h4,
-    .ai-variant-card h4 {
+    .ai-variant-card h4,
+    .scenario-card h4 {
       margin: 0 0 6px;
       font-size: 17px;
       color: #fff;
     }
 
     .portfolio-subtitle,
-    .ai-variant-subtitle {
+    .ai-variant-subtitle,
+    .scenario-subtitle {
       color: #94a3b8;
       font-size: 14px;
       margin-bottom: 10px;
     }
 
     .portfolio-list,
-    .ai-variant-list {
+    .ai-variant-list,
+    .instrument-list {
       margin: 0;
       padding-left: 18px;
     }
 
     .portfolio-list li,
-    .ai-variant-list li {
+    .ai-variant-list li,
+    .instrument-list li {
       margin-bottom: 6px;
       color: #dbe4f0;
       line-height: 1.4;
@@ -189,6 +194,7 @@
       display: inline-flex;
       gap: 4px;
       align-items: center;
+      margin-top: 8px;
     }
 
     .typing span {
@@ -232,6 +238,21 @@
       font-size: 14px;
       line-height: 1.5;
       margin-bottom: 12px;
+    }
+
+    .instrument-block {
+      margin-top: 12px;
+      padding: 12px;
+      background: rgba(18, 30, 52, 0.75);
+      border: 1px solid #283754;
+      border-radius: 12px;
+    }
+
+    .instrument-block-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #ffffff;
     }
   </style>
 </head>
@@ -303,6 +324,9 @@
           <div class="section-title">Подходящие варианты структуры</div>
           <div id="aiVariantsList"></div>
 
+          <div class="section-title">Сценарии поведения портфеля</div>
+          <div id="scenarioList"></div>
+
           <div id="proOfferBox" class="pro-offer hidden">
             <div class="pro-offer-title" id="proOfferTitle">Нужно больше вариантов?</div>
             <div class="pro-offer-text" id="proOfferText">
@@ -337,7 +361,6 @@
     let currentStep = 0;
     let awaitingText = null;
     let awaitingCustom = null;
-
     const totalSteps = 7;
 
     const strategyData = {
@@ -494,7 +517,7 @@
         {
           key: "portfolio_2",
           title: "Портфель 2",
-          subtitle: "С акцентом на рост",
+          subtitle: "Сильный упор на рост",
           tools: ["Акции — 40%", "ETF — 25%", "Облигации — 20%", "Золото — 5%", "Кэш — 10%"]
         },
         {
@@ -750,7 +773,7 @@
       document.getElementById("strategyBlock").classList.remove("hidden");
 
       document.getElementById("strategyIntro").textContent =
-        `Под ваш профиль я подобрал 3 стратегии. Выберите ту, которая кажется вам наиболее подходящей.`;
+        "Под ваш профиль я подобрал 3 стратегии. Выберите ту, которая кажется вам наиболее подходящей.";
 
       const wrap = document.getElementById("strategyButtons");
       wrap.innerHTML = "";
@@ -811,7 +834,45 @@
       document.getElementById("aiAnalysisBox").textContent = "";
       document.getElementById("aiVariantsWrap").classList.add("hidden");
       document.getElementById("aiVariantsList").innerHTML = "";
+      document.getElementById("scenarioList").innerHTML = "";
       document.getElementById("proOfferBox").classList.add("hidden");
+    }
+
+    function renderVariantBlocks(blocks) {
+      let html = "";
+      Object.entries(blocks || {}).forEach(([blockName, instruments]) => {
+        const items = (instruments || []).map(item => `<li>${item}</li>`).join("");
+        html += `
+          <div class="instrument-block">
+            <div class="instrument-block-title">${blockName}</div>
+            <ul class="instrument-list">${items}</ul>
+          </div>
+        `;
+      });
+      return html;
+    }
+
+    function renderScenarios(scenarios) {
+      const list = document.getElementById("scenarioList");
+      list.innerHTML = "";
+
+      const config = [
+        { key: "base", title: "Базовый сценарий", subtitle: "Если рынок движется в текущей логике" },
+        { key: "safe", title: "Осторожный сценарий", subtitle: "Если внешние условия ухудшаются" },
+        { key: "positive", title: "Позитивный сценарий", subtitle: "Если рынок поддерживает рост" }
+      ];
+
+      config.forEach(item => {
+        if (!scenarios || !scenarios[item.key]) return;
+        const card = document.createElement("div");
+        card.className = "scenario-card";
+        card.innerHTML = `
+          <h4>${item.title}</h4>
+          <div class="scenario-subtitle">${item.subtitle}</div>
+          <div class="muted">${scenarios[item.key]}</div>
+        `;
+        list.appendChild(card);
+      });
     }
 
     async function requestAiAnalysis() {
@@ -829,6 +890,7 @@
 
       aiVariantsWrap.classList.add("hidden");
       aiVariantsList.innerHTML = "";
+      document.getElementById("scenarioList").innerHTML = "";
       proOfferBox.classList.add("hidden");
 
       try {
@@ -857,20 +919,18 @@
             aiVariantsWrap.classList.remove("hidden");
 
             aiVariantsList.innerHTML = data.variants.map(variant => {
-              const items = (variant.tools || [])
-                .map(item => `<li>${item}</li>`)
-                .join("");
-
               return `
                 <div class="ai-variant-card">
                   <h4>${variant.title || "Вариант"}</h4>
                   <div class="ai-variant-subtitle">${variant.subtitle || ""}</div>
-                  <ul class="ai-variant-list">
-                    ${items}
-                  </ul>
+                  ${renderVariantBlocks(variant.blocks || {})}
                 </div>
               `;
             }).join("");
+          }
+
+          if (data.scenarios) {
+            renderScenarios(data.scenarios);
           }
 
           if (data.pro_offer) {
@@ -888,9 +948,9 @@
 
     function openProOffer() {
       if (window.Telegram && Telegram.WebApp) {
-        Telegram.WebApp.showAlert("Здесь можно будет открыть платную PRO-версию с расширенным подбором портфелей.");
+        Telegram.WebApp.showAlert("Здесь можно будет открыть платную PRO-версию с расширенным подбором портфелей и сценариев.");
       } else {
-        alert("Здесь можно будет открыть платную PRO-версию с расширенным подбором портфелей.");
+        alert("Здесь можно будет открыть платную PRO-версию с расширенным подбором портфелей и сценариев.");
       }
     }
   </script>
