@@ -1,728 +1,175 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>InvestPath AI</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, #07111f 0%, #0b1730 100%);
-      color: #fff;
-      padding: 14px;
-    }
-
-    .app {
-      max-width: 430px;
-      margin: 0 auto;
-    }
-
-    .phone {
       background: #0f172a;
-      border: 1px solid #23314b;
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-    }
-
-    .topbar {
-      background: #0b1220;
-      padding: 16px 18px;
-      border-bottom: 1px solid #1f2937;
-    }
-
-    .topbar-title {
-      font-size: 20px;
-      font-weight: 800;
-    }
-
-    .topbar-subtitle {
-      margin-top: 4px;
-      color: #94a3b8;
-      font-size: 13px;
-    }
-
-    .chat {
-      padding: 16px;
-      min-height: 560px;
-      max-height: 72vh;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      background:
-        radial-gradient(circle at top, rgba(37, 99, 235, 0.09), transparent 32%),
-        #0f172a;
-    }
-
-    .msg {
-      max-width: 85%;
-      padding: 14px 16px;
-      border-radius: 18px;
-      line-height: 1.45;
-      font-size: 16px;
-      white-space: pre-line;
-      animation: fadeIn 0.18s ease;
-    }
-
-    .bot {
-      align-self: flex-start;
-      background: #172033;
-      border: 1px solid #25324a;
-      border-bottom-left-radius: 8px;
-      color: #edf3ff;
-    }
-
-    .user {
-      align-self: flex-end;
-      background: #2f67ea;
-      border-bottom-right-radius: 8px;
       color: white;
+      margin: 0;
+      padding: 20px;
     }
 
-    .typing {
-      opacity: 0.72;
-      font-style: italic;
+    .box {
+      max-width: 420px;
+      margin: auto;
     }
 
-    .choices {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 4px;
-      animation: fadeIn 0.18s ease;
-    }
-
-    .choice-btn {
+    button {
       width: 100%;
-      border: none;
-      border-radius: 16px;
-      padding: 15px 16px;
-      background: #2f67ea;
-      color: #fff;
-      font-size: 17px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.1s ease, opacity 0.12s ease, background 0.12s ease;
-    }
-
-    .choice-btn:hover {
-      opacity: 0.96;
-    }
-
-    .choice-btn:active {
-      transform: scale(0.985);
-      background: #2256cb;
-    }
-
-    .choice-btn.secondary {
-      background: #1f2937;
-      border: 1px solid #334155;
-    }
-
-    .input-area {
-      display: none;
-      gap: 10px;
-      flex-direction: column;
-      animation: fadeIn 0.18s ease;
-    }
-
-    .input {
-      width: 100%;
-      border-radius: 14px;
-      border: 1px solid #334155;
-      background: #0b1220;
-      color: white;
-      padding: 15px 14px;
-      font-size: 16px;
-      outline: none;
-    }
-
-    .input:focus {
-      border-color: #3b82f6;
-    }
-
-    .send-btn {
-      width: 100%;
-      border: none;
-      border-radius: 14px;
       padding: 14px;
+      border-radius: 12px;
+      border: none;
       background: #2563eb;
       color: white;
-      font-size: 16px;
-      font-weight: 700;
+      margin-top: 10px;
       cursor: pointer;
     }
 
-    .result-card {
-      background: linear-gradient(180deg, #0b1220 0%, #101a2d 100%);
-      border: 1px solid #243146;
-      border-radius: 18px;
-      padding: 16px;
-      margin-top: 6px;
-      animation: fadeIn 0.18s ease;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    }
-
-    .result-card h3 {
-      margin: 0 0 10px;
-      font-size: 20px;
-      line-height: 1.3;
-      color: #ffffff;
-    }
-
-    .result-card p {
-      margin: 7px 0;
-      color: #dbe4f0;
-      line-height: 1.45;
-      font-size: 15px;
-    }
-
-    .tag {
-      display: inline-block;
-      margin-bottom: 10px;
-      background: linear-gradient(90deg, #172554 0%, #1d4ed8 100%);
-      color: #dbeafe;
-      font-size: 12px;
-      font-weight: 700;
-      padding: 6px 10px;
-      border-radius: 999px;
-    }
-
-    .warning {
-      background: #1d2435;
-      border: 1px solid #334155;
-      color: #d4dbe8;
-    }
-
-    .footer-panel {
-      border-top: 1px solid #1f2937;
-      background: #0b1220;
-      padding: 14px;
-    }
-
-    .progress-text {
-      color: #94a3b8;
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
-
-    .progress {
-      width: 100%;
-      height: 8px;
+    .secondary {
       background: #1f2937;
-      border-radius: 999px;
-      overflow: hidden;
     }
 
-    .progress-bar {
-      width: 8%;
-      height: 100%;
-      background: linear-gradient(90deg, #2563eb, #3b82f6);
-      transition: width 0.25s ease;
+    .result {
+      margin-top: 20px;
+      padding: 14px;
+      background: #111827;
+      border-radius: 12px;
+      white-space: pre-line;
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(6px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .ai-variant-card {
+      background: #0b1220;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 12px;
+    }
+
+    .ai-variant-list {
+      padding-left: 18px;
+    }
+
+    .pro {
+      margin-top: 20px;
+      padding: 14px;
+      background: #111827;
+      border-radius: 12px;
+      border: 1px solid #334155;
     }
   </style>
 </head>
+
 <body>
-  <div class="app">
-    <div class="phone">
-      <div class="topbar">
-        <div class="topbar-title">InvestPath AI</div>
-        <div class="topbar-subtitle">Персональный советчик по сценариям инвестирования</div>
-      </div>
 
-      <div class="chat" id="chat"></div>
+<div class="box">
 
-      <div class="footer-panel">
-        <div class="progress-text" id="progressText">Шаг 1 из 7</div>
-        <div class="progress">
-          <div class="progress-bar" id="progressBar"></div>
-        </div>
-      </div>
+  <h2>InvestPath AI</h2>
+
+  <button onclick="start()">Начать</button>
+
+  <div id="quiz" style="display:none;">
+    <p>Выбери стиль:</p>
+    <button onclick="selectRisk('Консервативный')">Консервативный</button>
+    <button onclick="selectRisk('Сбалансированный')">Сбалансированный</button>
+    <button onclick="selectRisk('Агрессивный')">Агрессивный</button>
+  </div>
+
+  <div id="aiAnalysisBox" class="result" style="display:none;"></div>
+
+  <div id="aiVariantsWrap" style="display:none;">
+    <h3>Подходящие варианты</h3>
+    <div id="aiVariantsList"></div>
+
+    <div id="proOfferBox" class="pro" style="display:none;">
+      <b id="proOfferTitle">Нужно больше вариантов?</b>
+      <p id="proOfferText"></p>
+      <button class="secondary" onclick="openPro()">Открыть PRO</button>
     </div>
   </div>
 
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
-
-    const chat = document.getElementById("chat");
-    const progressBar = document.getElementById("progressBar");
-    const progressText = document.getElementById("progressText");
-
-    const API_URL = "https://investpath-backend.onrender.com/analyze";
-
-    const profile = {
-      name: "",
-      term: "",
-      amount: "",
-      goal: "",
-      risk: "",
-      strategy: "",
-      portfolio: ""
-    };
-
-    const totalSteps = 7;
-
-    function updateProgress(step) {
-      progressText.textContent = `Шаг ${step} из ${totalSteps}`;
-      progressBar.style.width = `${(step / totalSteps) * 100}%`;
-    }
-
-    function scrollChat() {
-      setTimeout(() => {
-        chat.scrollTop = chat.scrollHeight;
-      }, 50);
-    }
-
-    function addBotMessage(text) {
-      const msg = document.createElement("div");
-      msg.className = "msg bot";
-      msg.textContent = text;
-      chat.appendChild(msg);
-      scrollChat();
-      return msg;
-    }
-
-    function addUserMessage(text) {
-      const msg = document.createElement("div");
-      msg.className = "msg user";
-      msg.textContent = text;
-      chat.appendChild(msg);
-      scrollChat();
-      return msg;
-    }
-
-    function addTyping(delay = 2500) {
-      const msg = document.createElement("div");
-      msg.className = "msg bot typing";
-      msg.textContent = "Печатает...";
-      chat.appendChild(msg);
-      scrollChat();
-
-      return new Promise(resolve => {
-        setTimeout(() => {
-          msg.remove();
-          resolve();
-        }, delay);
-      });
-    }
-
-    function addChoices(buttons) {
-      const wrap = document.createElement("div");
-      wrap.className = "choices";
-
-      buttons.forEach(btn => {
-        const el = document.createElement("button");
-        el.className = "choice-btn" + (btn.secondary ? " secondary" : "");
-        el.textContent = btn.text;
-        el.onclick = () => {
-          wrap.remove();
-          btn.onClick();
-        };
-        wrap.appendChild(el);
-      });
-
-      chat.appendChild(wrap);
-      scrollChat();
-      return wrap;
-    }
-
-    function addInput(placeholder, onSubmit, buttonText = "Отправить") {
-      const wrap = document.createElement("div");
-      wrap.className = "input-area";
-      wrap.style.display = "flex";
-
-      const input = document.createElement("input");
-      input.className = "input";
-      input.placeholder = placeholder;
-
-      const button = document.createElement("button");
-      button.className = "send-btn";
-      button.textContent = buttonText;
-
-      button.onclick = () => {
-        const value = input.value.trim();
-        if (!value) return;
-        wrap.remove();
-        onSubmit(value);
-      };
-
-      input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") button.click();
-      });
-
-      wrap.appendChild(input);
-      wrap.appendChild(button);
-      chat.appendChild(wrap);
-      input.focus();
-      scrollChat();
-    }
-
-    function addResultCard(title, lines, tagText) {
-      const card = document.createElement("div");
-      card.className = "result-card";
-
-      let html = "";
-      if (tagText) html += `<div class="tag">${tagText}</div>`;
-      html += `<h3>${title}</h3>`;
-      lines.forEach(line => {
-        html += `<p>${line}</p>`;
-      });
-
-      card.innerHTML = html;
-      chat.appendChild(card);
-      scrollChat();
-    }
-
-    function addWarning(text) {
-      const card = document.createElement("div");
-      card.className = "result-card warning";
-      card.textContent = text;
-      chat.appendChild(card);
-      scrollChat();
-    }
-
-    function addStrategyCard(title, lines, strategyKey) {
-      const card = document.createElement("div");
-      card.className = "result-card";
-
-      let html = `<div class="tag">Стратегия</div>`;
-      html += `<h3>${title}</h3>`;
-      lines.forEach(line => {
-        html += `<p>${line}</p>`;
-      });
-      html += `<div style="margin-top:12px;"><button class="choice-btn" onclick="selectStrategy('${strategyKey}', '${title}')">Выбрать стратегию</button></div>`;
-
-      card.innerHTML = html;
-      chat.appendChild(card);
-      scrollChat();
-    }
-
-    function addPortfolioCard(title, lines, strategyKey, portfolioKey) {
-      const card = document.createElement("div");
-      card.className = "result-card";
-
-      let html = `<div class="tag">Портфель</div>`;
-      html += `<h3>${title}</h3>`;
-      lines.forEach(line => {
-        html += `<p>${line}</p>`;
-      });
-      html += `<div style="margin-top:12px;"><button class="choice-btn" onclick="selectPortfolio('${strategyKey}', '${portfolioKey}', '${title}')">Выбрать портфель</button></div>`;
-
-      card.innerHTML = html;
-      chat.appendChild(card);
-      scrollChat();
-    }
-
-    function buildUserProfileJSON() {
-      return {
-        name: profile.name,
-        term: profile.term,
-        amount: profile.amount,
-        goal: profile.goal,
-        risk: profile.risk,
-        strategy: profile.strategy,
-        portfolio: profile.portfolio
-      };
-    }
-
-    async function requestGPTAnalysis() {
-      await addTyping(2500);
-      addBotMessage("Сейчас подготовлю персональный разбор выбранного варианта.");
-
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(buildUserProfileJSON())
-        });
-
-        if (!response.ok) {
-          throw new Error("Ошибка ответа сервера");
-        }
-
-        const data = await response.json();
-        addBotMessage(data.analysis || "Не удалось получить разбор.");
-      } catch (error) {
-        addBotMessage("Не удалось подключиться к AI-анализу. Проверь backend и URL сервера.");
-      }
-    }
-
-    async function startFlow() {
-      updateProgress(1);
-      await addTyping(2500);
-      addBotMessage("Привет. Это персональный советчик по сценариям инвестирования ваших средств.");
-
-      addChoices([
-        {
-          text: "Начать",
-          onClick: askName
-        }
-      ]);
-    }
-
-    async function askName() {
-      updateProgress(1);
-      await addTyping();
-      addBotMessage("Как я могу к вам обращаться?");
-      addInput("Введите имя", (value) => {
-        profile.name = value;
-        addUserMessage(value);
-        askTerm();
-      }, "Сохранить имя");
-    }
-
-    async function askTerm() {
-      updateProgress(2);
-      await addTyping();
-      addBotMessage(`Приятно познакомиться, ${profile.name}.\n\nНа какой срок вы планируете инвестировать?`);
-
-      addChoices([
-        { text: "5 месяцев", onClick: () => { profile.term = "5 месяцев"; addUserMessage("5 месяцев"); askAmount(); } },
-        { text: "1 год", onClick: () => { profile.term = "1 год"; addUserMessage("1 год"); askAmount(); } },
-        { text: "2 года", onClick: () => { profile.term = "2 года"; addUserMessage("2 года"); askAmount(); } },
-        {
-          text: "Другой срок",
-          secondary: true,
-          onClick: () => {
-            addUserMessage("Другой срок");
-            addInput("Например: 8 месяцев", (value) => {
-              profile.term = value;
-              addUserMessage(value);
-              askAmount();
-            }, "Сохранить срок");
-          }
-        }
-      ]);
-    }
-
-    async function askAmount() {
-      updateProgress(3);
-      await addTyping();
-      addBotMessage("Какую сумму вы планируете инвестировать?");
-
-      addChoices([
-        { text: "5 000–10 000 рублей", onClick: () => { profile.amount = "5 000–10 000 рублей"; addUserMessage("5 000–10 000 рублей"); askGoal(); } },
-        { text: "10 000–30 000 рублей", onClick: () => { profile.amount = "10 000–30 000 рублей"; addUserMessage("10 000–30 000 рублей"); askGoal(); } },
-        {
-          text: "Другая сумма",
-          secondary: true,
-          onClick: () => {
-            addUserMessage("Другая сумма");
-            addInput("Например: 75 000 рублей", (value) => {
-              profile.amount = value;
-              addUserMessage(value);
-              askGoal();
-            }, "Сохранить сумму");
-          }
-        }
-      ]);
-    }
-
-    async function askGoal() {
-      updateProgress(4);
-      await addTyping();
-      addBotMessage("Какая у вас цель инвестирования?");
-
-      addChoices([
-        { text: "Сбережение средств", onClick: () => { profile.goal = "Сбережение средств"; addUserMessage("Сбережение средств"); askRisk(); } },
-        { text: "Приумножение капитала", onClick: () => { profile.goal = "Приумножение капитала"; addUserMessage("Приумножение капитала"); askRisk(); } },
-        {
-          text: "Другое",
-          secondary: true,
-          onClick: () => {
-            addUserMessage("Другое");
-            addInput("Например: накопить на квартиру", (value) => {
-              profile.goal = value;
-              addUserMessage(value);
-              askRisk();
-            }, "Сохранить цель");
-          }
-        }
-      ]);
-    }
-
-    async function askRisk() {
-      updateProgress(5);
-      await addTyping();
-      addBotMessage("Какой стиль стратегии вам ближе?");
-
-      addChoices([
-        { text: "Консервативный", onClick: () => { profile.risk = "Консервативный"; addUserMessage("Консервативный"); showDisclaimer(); } },
-        { text: "Сбалансированный", onClick: () => { profile.risk = "Сбалансированный"; addUserMessage("Сбалансированный"); showDisclaimer(); } },
-        { text: "Агрессивный", onClick: () => { profile.risk = "Агрессивный"; addUserMessage("Агрессивный"); showDisclaimer(); } }
-      ]);
-    }
-
-    async function showDisclaimer() {
-      updateProgress(6);
-      await addTyping();
-      addBotMessage("Важно: наш сервис не является индивидуальной инвестиционной рекомендацией.");
-      addWarning("Информация в приложении носит информационно-образовательный характер. Перед инвестиционными решениями учитывайте личные риски, комиссии брокеров, горизонт инвестирования и рыночные условия.");
-
-      addChoices([
-        {
-          text: "Приступить",
-          onClick: () => {
-            addUserMessage("Приступить");
-            showProfile();
-          }
-        }
-      ]);
-    }
-
-    async function showProfile() {
-      updateProgress(7);
-      await addTyping();
-
-      addBotMessage(`Отлично, ${profile.name}.\n\nВот как выглядит ваш инвестиционный профиль:`);
-
-      addResultCard("Ваш профиль", [
-        `Срок: ${profile.term}`,
-        `Сумма: ${profile.amount}`,
-        `Цель: ${profile.goal}`,
-        `Стиль: ${profile.risk}`
-      ], "Профиль");
-
-      addBotMessage("На основе этого профиля я подготовил для вас 3 стратегии.");
-
-      addChoices([
-        {
-          text: "Посмотреть стратегии",
-          onClick: () => {
-            addUserMessage("Посмотреть стратегии");
-            showStrategies();
-          }
-        }
-      ]);
-    }
-
-    async function showStrategies() {
-      await addTyping();
-      addBotMessage("Выберите одну из 3 стратегий.");
-
-      if (profile.risk === "Консервативный") {
-        addStrategyCard("Консервативная стратегия", ["Ниже риск", "Фокус на сохранении капитала", "Подходит для осторожного подхода"], "conservative");
-        addStrategyCard("Умеренно-консервативная стратегия", ["Баланс стабильности и доходности", "Чуть больше инструментов", "Подходит для спокойного роста"], "moderate_conservative");
-        addStrategyCard("Доходная консервативная стратегия", ["Упор на стабильный денежный поток", "Больше облигационных идей", "Для долгого горизонта"], "income_conservative");
-      } else if (profile.risk === "Сбалансированный") {
-        addStrategyCard("Сбалансированная стратегия", ["Баланс роста и защиты", "Подходит для большинства сценариев", "Средняя волатильность"], "balanced");
-        addStrategyCard("Стратегия умеренного роста", ["Чуть больше акций и ETF", "Более выраженный потенциал роста", "Для среднего горизонта"], "growth_balanced");
-        addStrategyCard("Диверсифицированная стратегия", ["Шире набор инструментов", "Упор на распределение риска", "Подходит для гибкого подхода"], "diversified_balanced");
-      } else {
-        addStrategyCard("Агрессивная стратегия", ["Максимальный потенциал роста", "Выше волатильность", "Для готовых к риску"], "aggressive");
-        addStrategyCard("Стратегия активного роста", ["Больше доля акций и ETF", "Подходит для длинного горизонта", "Выше рыночные колебания"], "active_growth");
-        addStrategyCard("Высокодоходная стратегия", ["Самый рискованный вариант", "Фокус на максимальный upside", "Подходит не всем"], "high_return");
-      }
-
-      tg.MainButton.hide();
-    }
-
-    function selectStrategy(strategyKey, strategyTitle) {
-      profile.strategy = strategyKey;
-      addUserMessage(strategyTitle);
-
-      addBotMessage(
-        `Вы выбрали: ${strategyTitle}.\n\n` +
-        `Я сформировал 3 варианта портфелей, которые соответствуют вашему профилю и бюджету.`
-      );
-      showPortfolios(strategyKey);
-    }
-
-    function showPortfolios(strategyKey) {
-      addPortfolioCard("Портфель 1", ["Минимальный вход", "Более простой состав", "Подходит для аккуратного старта"], strategyKey, "portfolio_1");
-      addPortfolioCard("Портфель 2", ["Лучший баланс состава", "Более интересная диверсификация", "Подходит как основной вариант"], strategyKey, "portfolio_2");
-      addPortfolioCard("Портфель 3", ["Больше инструментов внутри", "Выше потенциальная сложность", "Для более уверенного пользователя"], strategyKey, "portfolio_3");
-    }
-
-    function selectPortfolio(strategyKey, portfolioKey, portfolioTitle) {
-      profile.portfolio = portfolioKey;
-      addUserMessage(portfolioTitle);
-      addBotMessage(`Вы выбрали ${portfolioTitle}.\n\nНиже — примерный состав под ваш профиль:`);
-      showPortfolioDetails(strategyKey, portfolioKey);
-    }
-
-    function showPortfolioDetails(strategyKey, portfolioKey) {
-      let lines = [];
-
-      if (strategyKey.includes("conservative")) {
-        if (portfolioKey === "portfolio_1") {
-          lines = ["ОФЗ и облигации: 70%", "Фонд ликвидности: 20%", "Акции крупных компаний: 10%", "Брокеры: Сбер, ВТБ, Альфа, Т-Банк"];
-        } else if (portfolioKey === "portfolio_2") {
-          lines = ["ОФЗ: 50%", "Корпоративные облигации: 25%", "ETF на облигации: 15%", "Акции голубых фишек: 10%", "Брокеры: Сбер, Альфа, Т-Банк"];
-        } else {
-          lines = ["ОФЗ: 40%", "Корпоративные облигации: 30%", "Фонд денежного рынка: 10%", "Дивидендные акции: 20%", "Брокеры: ВТБ, Сбер, Т-Банк"];
-        }
-      } else if (strategyKey.includes("balanced")) {
-        if (portfolioKey === "portfolio_1") {
-          lines = ["ETF на индекс: 35%", "Облигации: 40%", "Фонд ликвидности: 25%", "Брокеры: Сбер, Альфа, Т-Банк"];
-        } else if (portfolioKey === "portfolio_2") {
-          lines = ["ETF: 30%", "Акции крупных компаний: 25%", "Облигации: 30%", "Фонд ликвидности: 15%", "Брокеры: Т-Банк, ВТБ, Альфа"];
-        } else {
-          lines = ["Акции: 35%", "ETF: 25%", "Облигации: 25%", "Ликвидность: 15%", "Брокеры: Сбер, ВТБ, Альфа"];
-        }
-      } else {
-        if (portfolioKey === "portfolio_1") {
-          lines = ["Акции роста: 50%", "ETF на индекс: 30%", "Кэш: 20%", "Брокеры: Т-Банк, Альфа, Сбер"];
-        } else if (portfolioKey === "portfolio_2") {
-          lines = ["Акции роста: 60%", "ETF: 25%", "Идеи повышенного риска: 15%", "Брокеры: Т-Банк, Альфа, Сбер"];
-        } else {
-          lines = ["Акции и ETF: 70%", "Секторальные идеи: 20%", "Кэш: 10%", "Брокеры: Сбер, Т-Банк, Альфа"];
-        }
-      }
-
-      addBotMessage("Ниже — примерный состав выбранного портфеля под ваш профиль.");
-      addResultCard("Состав портфеля", lines, "Под ваш сценарий");
-
-      addWarning("Это примерный учебный портфель, а не индивидуальная инвестиционная рекомендация. Перед покупкой проверьте актуальные цены, комиссии и доступность инструментов у брокера.");
-
-      addChoices([
-        {
-          text: "Запросить AI-разбор",
-          onClick: () => {
-            addUserMessage("Запросить AI-разбор");
-            requestGPTAnalysis();
-          }
-        },
-        {
-          text: "Начать заново",
-          secondary: true,
-          onClick: () => location.reload()
-        }
-      ]);
-
-      tg.MainButton.setText("Получить подробный план");
-      tg.MainButton.color = "#2563eb";
-      tg.MainButton.textColor = "#ffffff";
-      tg.MainButton.show();
-    }
-
-    tg.MainButton.onClick(function () {
-      tg.showAlert("Кнопка уже готова. После подключения backend она может открывать подробный AI-план.");
+</div>
+
+<script>
+const API_URL = "https://investpath-backend.onrender.com/analyze";
+
+let profile = {};
+
+function start() {
+  document.getElementById("quiz").style.display = "block";
+}
+
+function selectRisk(risk) {
+  profile = {
+    name: "инвестор",
+    term: "5 месяцев",
+    amount: "5 000–10 000 рублей",
+    goal: "Приумножение капитала",
+    risk: risk
+  };
+
+  requestAiAnalysis();
+}
+
+async function requestAiAnalysis() {
+  const aiBox = document.getElementById("aiAnalysisBox");
+  const wrap = document.getElementById("aiVariantsWrap");
+  const list = document.getElementById("aiVariantsList");
+  const pro = document.getElementById("proOfferBox");
+
+  aiBox.style.display = "block";
+  aiBox.textContent = "Анализируем...";
+
+  wrap.style.display = "none";
+  list.innerHTML = "";
+  pro.style.display = "none";
+
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(profile)
     });
 
-    startFlow();
-  </script>
+    const data = await res.json();
+
+    aiBox.textContent = data.analysis;
+
+    if (data.variants) {
+      wrap.style.display = "block";
+
+      list.innerHTML = data.variants.map(v => `
+        <div class="ai-variant-card">
+          <b>${v.title}</b><br>
+          <small>${v.subtitle}</small>
+          <ul class="ai-variant-list">
+            ${v.tools.map(t => `<li>${t}</li>`).join("")}
+          </ul>
+        </div>
+      `).join("");
+    }
+
+    if (data.pro_offer) {
+      pro.style.display = "block";
+      document.getElementById("proOfferTitle").textContent = data.pro_offer.title;
+      document.getElementById("proOfferText").textContent = data.pro_offer.text;
+    }
+
+  } catch (e) {
+    aiBox.textContent = "Ошибка подключения";
+  }
+}
+
+function openPro() {
+  alert("PRO версия скоро 🚀");
+}
+</script>
+
 </body>
 </html>
