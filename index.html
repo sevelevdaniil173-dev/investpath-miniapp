@@ -1,1055 +1,215 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>InvestPath AI</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InvestPath AI</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, #07111f 0%, #0b1730 100%);
-      color: #fff;
-      padding: 14px;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0b1220;
+  color: white;
+  padding: 14px;
+}
 
-    .app {
-      max-width: 430px;
-      margin: 0 auto;
-    }
+.app {
+  max-width: 420px;
+  margin: auto;
+}
 
-    .card {
-      background: rgba(12, 24, 45, 0.95);
-      border: 1px solid rgba(80, 110, 170, 0.28);
-      border-radius: 18px;
-      padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
-    }
+.card {
+  background: #111827;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
 
-    .title {
-      font-size: 18px;
-      font-weight: 700;
-      margin: 0 0 8px;
-    }
+button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  margin-top: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
 
-    .subtitle {
-      color: #c8d4e7;
-      line-height: 1.45;
-      font-size: 14px;
-    }
+.secondary {
+  background: #1f2937;
+}
 
-    .bubble {
-      background: rgba(17, 30, 54, 0.95);
-      border: 1px solid rgba(84, 112, 163, 0.3);
-      border-radius: 18px;
-      padding: 14px;
-      line-height: 1.45;
-      white-space: pre-line;
-      margin-bottom: 12px;
-    }
+.hidden {
+  display: none;
+}
 
-    .bubble.assistant {
-      border-top-left-radius: 8px;
-    }
+.instrument-block {
+  background: #0b1220;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 10px;
+}
 
-    .section-title {
-      margin: 16px 0 10px;
-      font-size: 16px;
-      font-weight: 700;
-    }
+.pro-screen {
+  background: #111827;
+  padding: 16px;
+  border-radius: 16px;
+}
 
-    .muted {
-      color: #9eb1cf;
-      font-size: 13px;
-    }
+.pro-feature {
+  margin-top: 10px;
+}
 
-    .buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    button {
-      width: 100%;
-      border: none;
-      border-radius: 14px;
-      background: #2f6df6;
-      color: #fff;
-      padding: 14px 14px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    button.secondary {
-      background: #1c2b46;
-      border: 1px solid #32476d;
-      color: #d9e5f6;
-    }
-
-    button.ghost {
-      background: #13233d;
-      border: 1px solid #37507a;
-      color: #dce8ff;
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    input {
-      width: 100%;
-      border: 1px solid #334866;
-      background: #0a1324;
-      color: #fff;
-      border-radius: 14px;
-      padding: 14px;
-      font-size: 15px;
-      outline: none;
-      margin-top: 10px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .portfolio-card,
-    .ai-variant-card,
-    .scenario-card,
-    .scenario-detail-card {
-      background: #0b1220;
-      border: 1px solid #22304a;
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 12px;
-    }
-
-    .portfolio-card h4,
-    .ai-variant-card h4,
-    .scenario-card h4,
-    .scenario-detail-card h4 {
-      margin: 0 0 6px;
-      font-size: 17px;
-      color: #fff;
-    }
-
-    .portfolio-subtitle,
-    .ai-variant-subtitle,
-    .scenario-subtitle {
-      color: #94a3b8;
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-
-    .portfolio-list,
-    .instrument-list {
-      margin: 0;
-      padding-left: 18px;
-    }
-
-    .portfolio-list li,
-    .instrument-list li {
-      margin-bottom: 6px;
-      color: #dbe4f0;
-      line-height: 1.4;
-    }
-
-    .warn {
-      background: rgba(32, 45, 71, 0.95);
-      border: 1px solid rgba(86, 108, 144, 0.4);
-      border-radius: 16px;
-      padding: 14px;
-      color: #dce7f8;
-      line-height: 1.45;
-    }
-
-    .progress-wrap {
-      margin-top: 12px;
-    }
-
-    .progress-label {
-      font-size: 12px;
-      color: #9eb1cf;
-      margin-bottom: 6px;
-    }
-
-    .progress {
-      height: 8px;
-      background: #12203a;
-      border-radius: 999px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #2f6df6, #4ea2ff);
-      transition: width 0.3s ease;
-    }
-
-    .typing {
-      display: inline-flex;
-      gap: 4px;
-      align-items: center;
-      margin-top: 8px;
-    }
-
-    .typing span {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #8fb3ff;
-      animation: blink 1.2s infinite;
-    }
-
-    .typing span:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .typing span:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-
-    @keyframes blink {
-      0%, 80%, 100% { opacity: 0.25; transform: scale(0.9); }
-      40% { opacity: 1; transform: scale(1); }
-    }
-
-    .pro-offer {
-      margin-top: 16px;
-      padding: 16px;
-      background: linear-gradient(180deg, #111827 0%, #0f172a 100%);
-      border: 1px solid #334155;
-      border-radius: 14px;
-    }
-
-    .pro-offer-title {
-      font-size: 17px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #fff;
-    }
-
-    .pro-offer-text {
-      color: #cbd5e1;
-      font-size: 14px;
-      line-height: 1.5;
-      margin-bottom: 12px;
-    }
-
-    .instrument-block {
-      margin-top: 12px;
-      padding: 12px;
-      background: rgba(18, 30, 52, 0.75);
-      border: 1px solid #283754;
-      border-radius: 12px;
-    }
-
-    .instrument-block-title {
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #ffffff;
-    }
-
-    .scenario-actions {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .scenario-badge {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: #132a50;
-      border: 1px solid #34548b;
-      color: #dce8ff;
-      font-size: 12px;
-      margin-bottom: 10px;
-    }
-
-    .preview-lock {
-      color: #f7d58c;
-      font-size: 13px;
-      margin-top: 8px;
-    }
-  </style>
+.pro-price {
+  font-size: 28px;
+  text-align: center;
+  margin: 20px 0;
+}
+</style>
 </head>
+
 <body>
-  <div class="app">
-    <div class="card">
-      <div class="title">InvestPath AI</div>
-      <div class="subtitle">Подбор сценариев инвестирования под ваши цели.</div>
-    </div>
+<div class="app">
 
-    <div id="chatArea">
-      <div id="startBlock" class="card">
-        <div class="bubble assistant">Это персональный советчик по инвестициям ваших средств.</div>
-        <div class="buttons">
-          <button onclick="startFlow()">Начать</button>
-        </div>
-      </div>
+<div id="start">
+  <div class="card">
+    <h2>InvestPath AI</h2>
+    <p>Подбор инвест сценария за 1 минуту</p>
+    <button onclick="start()">Начать</button>
+  </div>
+</div>
 
-      <div id="questionBlock" class="card hidden">
-        <div id="assistantBubble" class="bubble assistant"></div>
+<div id="main" class="hidden">
+  <div class="card">
+    <p>Выберите риск</p>
+    <button onclick="setRisk('Консервативный')">Консервативный</button>
+    <button onclick="setRisk('Сбалансированный')">Сбалансированный</button>
+    <button onclick="setRisk('Агрессивный')">Агрессивный</button>
+  </div>
+</div>
 
-        <div id="answerButtons" class="buttons"></div>
-
-        <div id="textInputWrap" class="hidden">
-          <input id="textAnswerInput" type="text" placeholder="Введите ответ" />
-          <div class="buttons">
-            <button onclick="submitTextAnswer()">Продолжить</button>
-          </div>
-        </div>
-
-        <div id="customInputWrap" class="hidden">
-          <input id="customInput" type="text" placeholder="Введите свой вариант" />
-          <div class="buttons">
-            <button onclick="submitCustomAnswer()">Сохранить</button>
-          </div>
-        </div>
-
-        <div class="progress-wrap">
-          <div id="progressLabel" class="progress-label">Шаг 1 из 7</div>
-          <div class="progress">
-            <div id="progressFill" class="progress-fill"></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="strategyBlock" class="card hidden">
-        <div class="bubble assistant" id="strategyIntro"></div>
-        <div class="buttons" id="strategyButtons"></div>
-      </div>
-
-      <div id="portfolioBlock" class="card hidden">
-        <div class="bubble assistant" id="portfolioIntro"></div>
-        <div id="portfolioList"></div>
-      </div>
-
-      <div id="finalBlock" class="card hidden">
-        <div class="warn">
-          Это примерный учебный портфель, а не индивидуальная инвестиционная рекомендация.
-          Перед покупкой проверьте актуальные цены, комиссии и доступность инструментов у брокера.
-        </div>
-
-        <div class="buttons">
-          <button onclick="requestAiAnalysis()">Запросить AI-разбор</button>
-        </div>
-
-        <div id="aiAnalysisBox" class="bubble assistant hidden"></div>
-
-        <div id="aiVariantsWrap" class="hidden">
-          <div class="section-title">Подходящие варианты структуры</div>
-          <div id="aiVariantsList"></div>
-
-          <div class="section-title">Сценарии поведения портфеля</div>
-          <div id="scenarioButtons" class="scenario-actions"></div>
-
-          <div id="scenarioDetailBox" class="hidden"></div>
-
-          <div id="proOfferBox" class="pro-offer hidden">
-            <div class="pro-offer-title" id="proOfferTitle">Нужно больше вариантов?</div>
-            <div class="pro-offer-text" id="proOfferText">
-              В PRO-версии можно открыть расширенный подбор.
-            </div>
-            <button class="secondary" onclick="openProOffer()">Открыть PRO-подбор</button>
-          </div>
-        </div>
-      </div>
-    </div>
+<div id="result" class="hidden">
+  <div class="card">
+    <button onclick="getAI()">Получить AI-разбор</button>
   </div>
 
-  <script>
-    const tg = window.Telegram?.WebApp;
-    if (tg) {
-      tg.ready();
-      tg.expand();
+  <div id="analysis" class="card hidden"></div>
+
+  <div id="variants" class="card hidden"></div>
+
+  <div id="scenarios" class="card hidden"></div>
+</div>
+
+<div id="proScreen" class="hidden">
+  <div class="pro-screen">
+    <h2>PRO версия</h2>
+
+    <div class="pro-feature">✅ Больше портфелей</div>
+    <div class="pro-feature">✅ Полные сценарии</div>
+    <div class="pro-feature">✅ Глубокий анализ</div>
+
+    <div class="pro-price">299 ₽</div>
+
+    <button onclick="buy()">Купить PRO</button>
+    <button class="secondary" onclick="closePro()">Назад</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+const API = "https://investpath-backend.onrender.com/analyze";
+
+let profile = {
+  risk: ""
+};
+
+function start() {
+  document.getElementById("start").classList.add("hidden");
+  document.getElementById("main").classList.remove("hidden");
+}
+
+function setRisk(r) {
+  profile.risk = r;
+  document.getElementById("main").classList.add("hidden");
+  document.getElementById("result").classList.remove("hidden");
+}
+
+async function getAI() {
+  let res = await fetch(API, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(profile)
+  });
+
+  let data = await res.json();
+
+  document.getElementById("analysis").classList.remove("hidden");
+  document.getElementById("analysis").innerText = data.analysis;
+
+  renderVariants(data.variants);
+  renderScenarios(data.scenarios);
+}
+
+function renderVariants(v) {
+  let html = "<h3>Варианты</h3>";
+
+  v.forEach(x => {
+    html += `<div class="instrument-block"><b>${x.title}</b>`;
+    for (let k in x.blocks) {
+      html += `<div><b>${k}</b><ul>`;
+      x.blocks[k].forEach(i => html += `<li>${i}</li>`);
+      html += "</ul></div>";
     }
+    html += "</div>";
+  });
 
-    const API_URL = "https://investpath-backend.onrender.com/analyze";
+  let el = document.getElementById("variants");
+  el.innerHTML = html;
+  el.classList.remove("hidden");
+}
 
-    const profile = {
-      name: "",
-      term: "",
-      amount: "",
-      goal: "",
-      risk: "",
-      strategy: "",
-      portfolio: ""
-    };
+function renderScenarios(s) {
+  let el = document.getElementById("scenarios");
+  el.classList.remove("hidden");
 
-    let currentStep = 0;
-    let awaitingText = null;
-    let awaitingCustom = null;
-    let scenarioData = null;
-    const totalSteps = 7;
+  el.innerHTML = `
+    <h3>Сценарии</h3>
 
-    const strategyData = {
-      "Консервативный": [
-        {
-          key: "conservative",
-          title: "Стратегия 1 — Консервативная",
-          subtitle: "Фокус на сохранении капитала",
-          desc: "Подходит для аккуратного старта и умеренного риска."
-        },
-        {
-          key: "moderate_conservative",
-          title: "Стратегия 2 — Умеренно-консервативная",
-          subtitle: "Немного больше потенциала роста",
-          desc: "Комбинация защитных и умеренно доходных инструментов."
-        },
-        {
-          key: "income_conservative",
-          title: "Стратегия 3 — Доходная консервативная",
-          subtitle: "С упором на стабильность",
-          desc: "Подходит тем, кто ценит предсказуемость и спокойствие."
-        }
-      ],
-      "Сбалансированный": [
-        {
-          key: "balanced",
-          title: "Стратегия 1 — Сбалансированная",
-          subtitle: "Равновесие между ростом и защитой",
-          desc: "Базовый вариант для умеренного профиля."
-        },
-        {
-          key: "growth_balanced",
-          title: "Стратегия 2 — Умеренный рост",
-          subtitle: "Чуть больше акцента на рост",
-          desc: "Для тех, кто готов к небольшой волатильности."
-        },
-        {
-          key: "diversified_balanced",
-          title: "Стратегия 3 — Диверсифицированная",
-          subtitle: "Широкое распределение активов",
-          desc: "Для лучшего распределения риска."
-        }
-      ],
-      "Агрессивный": [
-        {
-          key: "aggressive",
-          title: "Стратегия 1 — Агрессивная",
-          subtitle: "Высокий потенциал роста",
-          desc: "Для тех, кто готов к сильным колебаниям."
-        },
-        {
-          key: "active_growth",
-          title: "Стратегия 2 — Активный рост",
-          subtitle: "Упор на активы роста",
-          desc: "Подходит для длинного горизонта."
-        },
-        {
-          key: "high_return",
-          title: "Стратегия 3 — Высокодоходная",
-          subtitle: "Максимум потенциала",
-          desc: "Для пользователей с высокой толерантностью к риску."
-        }
-      ]
-    };
+    <button onclick="showBase()">Базовый</button>
+    <button onclick="openPro()">Осторожный (PRO)</button>
+    <button onclick="openPro()">Позитивный (PRO)</button>
 
-    const portfolioData = {
-      conservative: [
-        {
-          key: "portfolio_1",
-          title: "Портфель 1",
-          subtitle: "Спокойный сценарий",
-          tools: ["ОФЗ — 45%", "Фонды денежного рынка — 20%", "ETF — 15%", "Золото — 10%", "Кэш — 10%"]
-        },
-        {
-          key: "portfolio_2",
-          title: "Портфель 2",
-          subtitle: "С умеренным ростом",
-          tools: ["ОФЗ — 35%", "Облигации — 25%", "ETF — 20%", "Золото — 10%", "Кэш — 10%"]
-        },
-        {
-          key: "portfolio_3",
-          title: "Портфель 3",
-          subtitle: "Защита + дивиденды",
-          tools: ["Облигации — 35%", "Фонды — 25%", "Дивидендные акции — 20%", "Золото — 10%", "Кэш — 10%"]
-        }
-      ],
-      moderate_conservative: [
-        {
-          key: "portfolio_1",
-          title: "Портфель 1",
-          subtitle: "Более стабильный",
-          tools: ["ОФЗ — 40%", "Облигации — 25%", "ETF — 20%", "Золото — 10%", "Кэш — 5%"]
-        },
-        {
-          key: "portfolio_2",
-          title: "Портфель 2",
-          subtitle: "С акцентом на баланс",
-          tools: ["Облигации — 35%", "ETF — 25%", "Акции крупных компаний — 15%", "Золото — 10%", "Кэш — 15%"]
-        },
-        {
-          key: "portfolio_3",
-          title: "Портфель 3",
-          subtitle: "Более универсальный",
-          tools: ["ОФЗ — 30%", "ETF — 25%", "Облигации — 25%", "Золото — 10%", "Кэш — 10%"]
-        }
-      ],
-      income_conservative: [
-        {
-          key: "portfolio_1",
-          title: "Портфель 1",
-          subtitle: "С упором на доход",
-          tools: ["Облигации — 40%", "Фонды — 20%", "Дивидендные акции — 20%", "Золото — 10%", "Кэш — 10%"]
-        },
-        {
-          key: "portfolio_2",
-          title: "Портфель 2",
-          subtitle: "Стабильный поток",
-          tools: ["ОФЗ — 35%", "Облигации — 30%", "ETF — 15%", "Золото — 10%", "Кэш — 10%"]
-        },
-        {
-          key: "portfolio_3",
-          title: "Портфель 3",
-          subtitle: "Доход + защита",
-          tools: ["ОФЗ — 30%", "Фонды — 20%", "Дивидендные акции — 25%", "Золото — 10%", "Кэш — 15%"]
-        }
-      ],
-      balanced: [
-        {
-          key: "portfolio_1",
-          title: "Портфель 1",
-          subtitle: "Базовый сбалансированный",
-          tools: ["Акции крупных компаний — 25%", "ETF/фонды — 30%", "Облигации — 25%", "Золото — 10%", "Кэш — 10%"]
-        },
-        {
-          key: "portfolio_2",
-          title: "Портфель 2",
-          subtitle: "Рост + защита",
-          tools: ["Акции роста — 30%", "ETF — 25%", "Облигации — 25%", "Золото — 10%", "Кэш — 10%"]
-        },
-        {
-          key: "portfolio_3",
-          title: "Портфель 3",
-          subtitle: "Универсальный",
-          tools: ["Акции — 30%", "ETF — 25%", "Облигации — 25%", "Золото — 10%", "Кэш — 10%"]
-        }
-      ],
-      growth_balanced: [
-        {
-          key: "portfolio_1",
-          title: "Портфель 1",
-          subtitle: "Более активный",
-          tools: ["Акции роста — 35%", "ETF/фонды — 30%", "Облигации — 20%", "Золото — 5%", "Кэш — 10%"]
-        },
-        {
-          key: "portfolio_2",
-          title: "Портфель 2",
-          subtitle: "Сильный упор на рост",
-          tools: ["Акции — 40%", "ETF — 25%", "Облигации — 20%", "Золото — 5%", "Кэш — 10%"]
-        },
-        {
-          key: "portfolio_3",
-          title: "Портфель 3",
-          subtitle: "Рост на длинный срок",
-          tools: ["Акции роста — 35%", "ETF — 30%", "Облигации — 15%", "Золото — 5%", "Кэш — 15%"]
-        }
-      ],
-      diversified_balanced: [
-        {
-          key: "portfolio_1",
-          title: "Портфель 1",
-          subtitle: "Широкая диверсификация",
-          tools: ["Акции крупных компаний — 25%", "ETF/фонды — 30%", "Облигации — 20%", "Золото — 10%", "Кэш — 15%"]
-        },
-        {
-          key: "portfolio_2",
-          title: "Портфель 2",
-          subtitle: "Сбалансированная сетка",
-          tools: ["Акции — 30%", "ETF — 30%", "Облигации — 20%", "Золото — 10%", "Кэш — 10%"]
-        },
-        {
-          key: "portfolio_3",
-          title: "Портфель 3",
-          subtitle: "Защита + рост",
-          tools: ["Акции крупных компаний — 30%", "ETF — 25%", "Облигации — 25%", "Золото — 10%", "Кэш — 10%"]
-        }
-      ],
-      aggressive: [
-        {
-          key: "portfolio_1",
-          title: "Портфель 1",
-          subtitle: "Рост капитала",
-          tools: ["Акции роста — 40%", "ETF Nasdaq — 30%", "Облигации — 10%", "Золото — 5%", "Кэш — 15%"]
-        },
-        {
-          key: "portfolio_2",
-          title: "Портфель 2",
-          subtitle: "Более рискованный",
-          tools: ["Акции роста — 50%", "ETF/фонды — 25%", "Высокорисковые идеи — 10%", "Золото — 5%", "Кэш — 10%"]
-        },
-        {
-          key: "portfolio_3",
-          title: "Портфель 3",
-          subtitle: "Максимум потенциала",
-          tools: ["Акции роста — 55%", "ETF Nasdaq — 20%", "Крипто — 10%", "Золото — 5%", "Кэш — 10%"]
-        }
-      ],
-      active_growth: [
-        {
-          key: "portfolio_1",
-          title: "Портфель 1",
-          subtitle: "Активный рост",
-          tools: ["Акции роста — 45%", "ETF Nasdaq — 25%", "Облигации — 10%", "Золото — 5%", "Кэш — 15%"]
-        },
-        {
-          key: "portfolio_2",
-          title: "Портфель 2",
-          subtitle: "Сильный упор на рост",
-          tools: ["Акции — 50%", "ETF — 20%", "Высокорисковые идеи — 10%", "Золото — 5%", "Кэш — 15%"]
-        },
-        {
-          key: "portfolio_3",
-          title: "Портфель 3",
-          subtitle: "Рынок роста",
-          tools: ["Акции роста — 50%", "ETF Nasdaq — 25%", "Крипто — 10%", "Золото — 5%", "Кэш — 10%"]
-        }
-      ],
-      high_return: [
-        {
-          key: "portfolio_1",
-          title: "Портфель 1",
-          subtitle: "Максимум доходности",
-          tools: ["Акции роста — 50%", "ETF — 25%", "Высокорисковые идеи — 10%", "Золото — 5%", "Кэш — 10%"]
-        },
-        {
-          key: "portfolio_2",
-          title: "Портфель 2",
-          subtitle: "Агрессивный набор",
-          tools: ["Акции роста — 55%", "ETF Nasdaq — 20%", "Крипто — 10%", "Золото — 5%", "Кэш — 10%"]
-        },
-        {
-          key: "portfolio_3",
-          title: "Портфель 3",
-          subtitle: "Высокий потенциал",
-          tools: ["Акции роста — 50%", "ETF Nasdaq — 25%", "Крипто — 15%", "Золото — 5%", "Кэш — 5%"]
-        }
-      ]
-    };
+    <div id="scenarioText"></div>
+  `;
 
-    function updateProgress(step) {
-      currentStep = step;
-      const label = document.getElementById("progressLabel");
-      const fill = document.getElementById("progressFill");
-      label.textContent = `Шаг ${step} из ${totalSteps}`;
-      fill.style.width = `${(step / totalSteps) * 100}%`;
-    }
+  window.currentScenarios = s;
+}
 
-    function startFlow() {
-      document.getElementById("startBlock").classList.add("hidden");
-      document.getElementById("questionBlock").classList.remove("hidden");
-      askName();
-    }
+function showBase() {
+  document.getElementById("scenarioText").innerText =
+    currentScenarios.base;
+}
 
-    function setAssistantQuestion(text) {
-      document.getElementById("assistantBubble").textContent = text;
-      document.getElementById("answerButtons").innerHTML = "";
-      document.getElementById("textInputWrap").classList.add("hidden");
-      document.getElementById("customInputWrap").classList.add("hidden");
-      awaitingText = null;
-      awaitingCustom = null;
-    }
+function openPro() {
+  document.getElementById("result").classList.add("hidden");
+  document.getElementById("proScreen").classList.remove("hidden");
+}
 
-    function renderButtons(items) {
-      const wrap = document.getElementById("answerButtons");
-      wrap.innerHTML = "";
-      items.forEach(item => {
-        const btn = document.createElement("button");
-        btn.textContent = item.label;
-        if (item.secondary) btn.classList.add("secondary");
-        btn.onclick = item.onClick;
-        wrap.appendChild(btn);
-      });
-    }
+function closePro() {
+  document.getElementById("proScreen").classList.add("hidden");
+  document.getElementById("result").classList.remove("hidden");
+}
 
-    function askName() {
-      updateProgress(1);
-      setAssistantQuestion("Как я могу к вам обращаться?");
-      document.getElementById("textInputWrap").classList.remove("hidden");
-      document.getElementById("textAnswerInput").value = "";
-      document.getElementById("textAnswerInput").placeholder = "Введите имя";
-      awaitingText = "name";
-    }
+function buy() {
+  alert("Дальше подключаем оплату (Telegram Payments)");
+}
+</script>
 
-    function submitTextAnswer() {
-      const input = document.getElementById("textAnswerInput");
-      const value = input.value.trim();
-      if (!value) return;
-
-      if (awaitingText === "name") {
-        profile.name = value;
-        askTerm();
-      }
-    }
-
-    function askTerm() {
-      updateProgress(2);
-      setAssistantQuestion(`Приятно познакомиться, ${profile.name}. На какой срок вы планируете инвестировать?`);
-      renderButtons([
-        { label: "5 месяцев", onClick: () => saveTerm("5 месяцев") },
-        { label: "1 год", onClick: () => saveTerm("1 год") },
-        { label: "2 года", onClick: () => saveTerm("2 года") },
-        { label: "Другой срок", secondary: true, onClick: showCustomTerm }
-      ]);
-    }
-
-    function saveTerm(value) {
-      profile.term = value;
-      askAmount();
-    }
-
-    function showCustomTerm() {
-      awaitingCustom = "term";
-      document.getElementById("customInputWrap").classList.remove("hidden");
-      document.getElementById("customInput").value = "";
-      document.getElementById("customInput").placeholder = "Например: 8 месяцев";
-    }
-
-    function askAmount() {
-      updateProgress(3);
-      setAssistantQuestion("Какую сумму вы планируете инвестировать?");
-      renderButtons([
-        { label: "5 000–10 000 рублей", onClick: () => saveAmount("5 000–10 000 рублей") },
-        { label: "10 000–30 000 рублей", onClick: () => saveAmount("10 000–30 000 рублей") },
-        { label: "Другая сумма", secondary: true, onClick: showCustomAmount }
-      ]);
-    }
-
-    function saveAmount(value) {
-      profile.amount = value;
-      askGoal();
-    }
-
-    function showCustomAmount() {
-      awaitingCustom = "amount";
-      document.getElementById("customInputWrap").classList.remove("hidden");
-      document.getElementById("customInput").value = "";
-      document.getElementById("customInput").placeholder = "Например: 75 000 рублей";
-    }
-
-    function askGoal() {
-      updateProgress(4);
-      setAssistantQuestion("Какая у вас цель инвестирования?");
-      renderButtons([
-        { label: "Сбережение средств", onClick: () => saveGoal("Сбережение средств") },
-        { label: "Приумножение капитала", onClick: () => saveGoal("Приумножение капитала") },
-        { label: "Другая цель", secondary: true, onClick: showCustomGoal }
-      ]);
-    }
-
-    function saveGoal(value) {
-      profile.goal = value;
-      askRisk();
-    }
-
-    function showCustomGoal() {
-      awaitingCustom = "goal";
-      document.getElementById("customInputWrap").classList.remove("hidden");
-      document.getElementById("customInput").value = "";
-      document.getElementById("customInput").placeholder = "Например: накопить на квартиру";
-    }
-
-    function askRisk() {
-      updateProgress(5);
-      setAssistantQuestion("Какой стиль вам ближе?");
-      renderButtons([
-        { label: "Консервативный", onClick: () => saveRisk("Консервативный") },
-        { label: "Сбалансированный", onClick: () => saveRisk("Сбалансированный") },
-        { label: "Агрессивный", onClick: () => saveRisk("Агрессивный") }
-      ]);
-    }
-
-    function saveRisk(value) {
-      profile.risk = value;
-      showStrategies();
-    }
-
-    function submitCustomAnswer() {
-      const input = document.getElementById("customInput");
-      const value = input.value.trim();
-      if (!value) return;
-
-      if (awaitingCustom === "term") {
-        profile.term = value;
-        askAmount();
-      } else if (awaitingCustom === "amount") {
-        profile.amount = value;
-        askGoal();
-      } else if (awaitingCustom === "goal") {
-        profile.goal = value;
-        askRisk();
-      }
-
-      input.value = "";
-      document.getElementById("customInputWrap").classList.add("hidden");
-      awaitingCustom = null;
-    }
-
-    function showStrategies() {
-      updateProgress(6);
-      document.getElementById("questionBlock").classList.add("hidden");
-      document.getElementById("strategyBlock").classList.remove("hidden");
-
-      document.getElementById("strategyIntro").textContent =
-        "Под ваш профиль я подобрал 3 стратегии. Выберите ту, которая кажется вам наиболее подходящей.";
-
-      const wrap = document.getElementById("strategyButtons");
-      wrap.innerHTML = "";
-
-      (strategyData[profile.risk] || []).forEach(strategy => {
-        const block = document.createElement("div");
-        block.className = "portfolio-card";
-        block.innerHTML = `
-          <h4>${strategy.title}</h4>
-          <div class="portfolio-subtitle">${strategy.subtitle}</div>
-          <div class="muted">${strategy.desc}</div>
-          <div class="buttons">
-            <button onclick="selectStrategy('${strategy.key}')">Выбрать</button>
-          </div>
-        `;
-        wrap.appendChild(block);
-      });
-    }
-
-    function selectStrategy(strategyKey) {
-      profile.strategy = strategyKey;
-      showPortfolios();
-    }
-
-    function showPortfolios() {
-      updateProgress(7);
-      document.getElementById("strategyBlock").classList.add("hidden");
-      document.getElementById("portfolioBlock").classList.remove("hidden");
-
-      document.getElementById("portfolioIntro").textContent =
-        "Теперь выберите один из портфелей. После выбора я подготовлю персональный разбор и покажу дополнительные варианты структуры.";
-
-      const list = document.getElementById("portfolioList");
-      list.innerHTML = "";
-
-      (portfolioData[profile.strategy] || []).forEach(portfolio => {
-        const items = portfolio.tools.map(item => `<li>${item}</li>`).join("");
-        const card = document.createElement("div");
-        card.className = "portfolio-card";
-        card.innerHTML = `
-          <h4>${portfolio.title}</h4>
-          <div class="portfolio-subtitle">${portfolio.subtitle}</div>
-          <ul class="portfolio-list">${items}</ul>
-          <div class="buttons">
-            <button onclick="selectPortfolio('${portfolio.key}')">Выбрать портфель</button>
-          </div>
-        `;
-        list.appendChild(card);
-      });
-    }
-
-    function selectPortfolio(portfolioKey) {
-      profile.portfolio = portfolioKey;
-      document.getElementById("portfolioBlock").classList.add("hidden");
-      document.getElementById("finalBlock").classList.remove("hidden");
-
-      document.getElementById("aiAnalysisBox").classList.add("hidden");
-      document.getElementById("aiAnalysisBox").textContent = "";
-      document.getElementById("aiVariantsWrap").classList.add("hidden");
-      document.getElementById("aiVariantsList").innerHTML = "";
-      document.getElementById("scenarioButtons").innerHTML = "";
-      document.getElementById("scenarioDetailBox").innerHTML = "";
-      document.getElementById("scenarioDetailBox").classList.add("hidden");
-      document.getElementById("proOfferBox").classList.add("hidden");
-      scenarioData = null;
-    }
-
-    function renderVariantBlocks(blocks) {
-      let html = "";
-      Object.entries(blocks || {}).forEach(([blockName, instruments]) => {
-        const items = (instruments || []).map(item => `<li>${item}</li>`).join("");
-        html += `
-          <div class="instrument-block">
-            <div class="instrument-block-title">${blockName}</div>
-            <ul class="instrument-list">${items}</ul>
-          </div>
-        `;
-      });
-      return html;
-    }
-
-    function renderScenarioButtons(scenarios) {
-      scenarioData = scenarios || {};
-      const wrap = document.getElementById("scenarioButtons");
-      wrap.innerHTML = "";
-
-      const buttons = [
-        {
-          key: "base",
-          label: "Базовый сценарий",
-          type: "free"
-        },
-        {
-          key: "safe",
-          label: "Осторожный сценарий",
-          type: "pro"
-        },
-        {
-          key: "positive",
-          label: "Позитивный сценарий",
-          type: "pro"
-        }
-      ];
-
-      buttons.forEach(item => {
-        const btn = document.createElement("button");
-        btn.className = item.type === "free" ? "ghost" : "secondary";
-        btn.textContent = item.type === "free" ? item.label : `${item.label} · PRO`;
-        btn.onclick = () => openScenario(item.key, item.type);
-        wrap.appendChild(btn);
-      });
-    }
-
-    function openScenario(key, type) {
-      const box = document.getElementById("scenarioDetailBox");
-      box.classList.remove("hidden");
-
-      if (type === "free") {
-        box.innerHTML = `
-          <div class="scenario-detail-card">
-            <div class="scenario-badge">Бесплатно</div>
-            <h4>Базовый сценарий</h4>
-            <div class="scenario-subtitle">Что вероятнее всего при текущих условиях</div>
-            <div class="muted">${scenarioData.base || "Базовый сценарий временно недоступен."}</div>
-            <div class="instrument-block">
-              <div class="instrument-block-title">Что делать в этом сценарии</div>
-              <ul class="instrument-list">
-                <li>Соблюдать выбранную структуру без резких изменений</li>
-                <li>Инвестировать поэтапно, а не одной точкой</li>
-                <li>Пересматривать портфель раз в 3–6 месяцев</li>
-              </ul>
-            </div>
-          </div>
-        `;
-      } else if (key === "safe") {
-        box.innerHTML = `
-          <div class="scenario-detail-card">
-            <div class="scenario-badge">Preview PRO</div>
-            <h4>Осторожный сценарий</h4>
-            <div class="scenario-subtitle">Что будет, если рынок ухудшится</div>
-            <div class="muted">${scenarioData.safe || "Осторожный сценарий временно недоступен."}</div>
-            <div class="preview-lock">Полный разбор сценария, действия по защите портфеля и расширенная аналитика доступны в PRO.</div>
-            <div class="buttons">
-              <button class="secondary" onclick="openProOffer()">Открыть PRO</button>
-            </div>
-          </div>
-        `;
-      } else if (key === "positive") {
-        box.innerHTML = `
-          <div class="scenario-detail-card">
-            <div class="scenario-badge">Preview PRO</div>
-            <h4>Позитивный сценарий</h4>
-            <div class="scenario-subtitle">Что будет, если рынок поддержит рост</div>
-            <div class="muted">${scenarioData.positive || "Позитивный сценарий временно недоступен."}</div>
-            <div class="preview-lock">Полный разбор сценария роста, действия по ребалансировке и расширенный план доступны в PRO.</div>
-            <div class="buttons">
-              <button class="secondary" onclick="openProOffer()">Открыть PRO</button>
-            </div>
-          </div>
-        `;
-      }
-    }
-
-    async function requestAiAnalysis() {
-      const aiBox = document.getElementById("aiAnalysisBox");
-      const aiVariantsWrap = document.getElementById("aiVariantsWrap");
-      const aiVariantsList = document.getElementById("aiVariantsList");
-      const proOfferBox = document.getElementById("proOfferBox");
-      const proOfferTitle = document.getElementById("proOfferTitle");
-      const proOfferText = document.getElementById("proOfferText");
-
-      aiBox.classList.remove("hidden");
-      aiBox.innerHTML = `Сейчас подготовлю персональный разбор выбранного варианта...
-
-<div class="typing"><span></span><span></span><span></span></div>`;
-
-      aiVariantsWrap.classList.add("hidden");
-      aiVariantsList.innerHTML = "";
-      document.getElementById("scenarioButtons").innerHTML = "";
-      document.getElementById("scenarioDetailBox").innerHTML = "";
-      document.getElementById("scenarioDetailBox").classList.add("hidden");
-      proOfferBox.classList.add("hidden");
-
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            name: profile.name || "",
-            term: profile.term || "",
-            amount: profile.amount || "",
-            goal: profile.goal || "",
-            risk: profile.risk || "",
-            strategy: profile.strategy || "",
-            portfolio: profile.portfolio || ""
-          })
-        });
-
-        const data = await response.json();
-
-        setTimeout(() => {
-          aiBox.textContent = data.analysis || "Разбор временно недоступен.";
-
-          if (data.variants && Array.isArray(data.variants) && data.variants.length > 0) {
-            aiVariantsWrap.classList.remove("hidden");
-
-            aiVariantsList.innerHTML = data.variants.map(variant => {
-              return `
-                <div class="ai-variant-card">
-                  <h4>${variant.title || "Вариант"}</h4>
-                  <div class="ai-variant-subtitle">${variant.subtitle || ""}</div>
-                  ${renderVariantBlocks(variant.blocks || {})}
-                </div>
-              `;
-            }).join("");
-          }
-
-          if (data.scenarios) {
-            renderScenarioButtons(data.scenarios);
-          }
-
-          if (data.pro_offer) {
-            proOfferBox.classList.remove("hidden");
-            proOfferTitle.textContent = data.pro_offer.title || "Нужно больше вариантов?";
-            proOfferText.textContent = data.pro_offer.text || "В PRO-версии можно открыть расширенный подбор.";
-          }
-        }, 2500);
-
-      } catch (error) {
-        aiBox.textContent = "Не удалось подключиться к AI-анализу. Проверь backend и URL сервера.";
-        console.error(error);
-      }
-    }
-
-    function openProOffer() {
-      if (window.Telegram && Telegram.WebApp) {
-        Telegram.WebApp.showAlert("Здесь можно будет открыть платную PRO-версию с расширенным подбором портфелей и полным разбором сценариев.");
-      } else {
-        alert("Здесь можно будет открыть платную PRO-версию с расширенным подбором портфелей и полным разбором сценариев.");
-      }
-    }
-  </script>
 </body>
 </html>
