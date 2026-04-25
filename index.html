@@ -678,16 +678,92 @@ function openScenario(type) {
       <div class="scenario-detail-card">
         <div class="scenario-badge">Бесплатно</div>
         <h4>Базовый сценарий</h4>
-        <div class="muted">${scenarioData?.base || "Сценарий временно недоступен."}</div>
+
+        <div class="muted">
+          ${scenarioData?.base || "Сценарий временно недоступен."}
+        </div>
+
+        <div class="instrument-block">
+          <div class="instrument-block-title">Что делать дальше</div>
+          <ul>
+            <li>Не вкладывать всю сумму сразу, а распределить вход на 2–3 части.</li>
+            <li>Сначала купить более стабильные инструменты: облигации, фонды или кэш-часть.</li>
+            <li>Акции добавлять постепенно, особенно если рынок волатилен.</li>
+            <li>Через 30 дней пересмотреть портфель и сравнить результат с планом.</li>
+          </ul>
+        </div>
+
+        <div class="instrument-block">
+          <div class="instrument-block-title">Пример порядка действий</div>
+          <ul>
+            <li>Шаг 1: открыть брокерское приложение.</li>
+            <li>Шаг 2: проверить комиссии и доступность выбранных инструментов.</li>
+            <li>Шаг 3: распределить сумму по структуре портфеля.</li>
+            <li>Шаг 4: сохранить портфель и вернуться к нему через месяц.</li>
+          </ul>
+        </div>
+
+        <div class="warn" style="margin-top:12px;">
+          Это не индивидуальная инвестиционная рекомендация. Перед покупкой проверьте актуальные цены, комиссии и риски.
+        </div>
+
+        <div class="buttons">
+          <button onclick="showNextImprovement()">Что можно улучшить?</button>
+          <button class="secondary" onclick="openProOffer()">Получить расширенный план в PRO</button>
+        </div>
       </div>
     `;
-  } else {
+  } else if (type === "safe") {
     box.innerHTML = `
       <div class="scenario-detail-card">
         <div class="scenario-badge">Preview PRO</div>
-        <h4>${type === "safe" ? "Осторожный сценарий" : "Позитивный сценарий"}</h4>
-        <div class="muted">${scenarioData?.[type] || "Сценарий временно недоступен."}</div>
-        <div class="preview-lock">Полный разбор доступен в PRO.</div>
+        <h4>Осторожный сценарий</h4>
+
+        <div class="muted">
+          ${scenarioData?.safe || "Сценарий временно недоступен."}
+        </div>
+
+        <div class="instrument-block">
+          <div class="instrument-block-title">Краткий смысл</div>
+          <ul>
+            <li>Снизить долю рискованных активов.</li>
+            <li>Увеличить защитную часть портфеля.</li>
+            <li>Оставить часть денег в кэше для докупки.</li>
+          </ul>
+        </div>
+
+        <div class="preview-lock">
+          Полный план защиты портфеля, проценты перераспределения и список инструментов доступны в PRO.
+        </div>
+
+        <div class="buttons">
+          <button class="secondary" onclick="openProOffer()">Открыть PRO</button>
+        </div>
+      </div>
+    `;
+  } else if (type === "positive") {
+    box.innerHTML = `
+      <div class="scenario-detail-card">
+        <div class="scenario-badge">Preview PRO</div>
+        <h4>Позитивный сценарий</h4>
+
+        <div class="muted">
+          ${scenarioData?.positive || "Сценарий временно недоступен."}
+        </div>
+
+        <div class="instrument-block">
+          <div class="instrument-block-title">Краткий смысл</div>
+          <ul>
+            <li>Увеличить долю активов роста.</li>
+            <li>Сохранять часть защитных инструментов.</li>
+            <li>Не заходить в рынок всей суммой сразу.</li>
+          </ul>
+        </div>
+
+        <div class="preview-lock">
+          Полный план роста, ребалансировка и расширенный список бумаг доступны в PRO.
+        </div>
+
         <div class="buttons">
           <button class="secondary" onclick="openProOffer()">Открыть PRO</button>
         </div>
@@ -712,6 +788,34 @@ function buyPro() {
   } else {
     alert("Оплата PRO скоро будет доступна.");
   }
+}
+  function showNextImprovement() {
+  const box = document.getElementById("scenarioDetailBox");
+
+  box.innerHTML += `
+    <div class="scenario-detail-card">
+      <h4>Следующее улучшение портфеля</h4>
+
+      <div class="muted">
+        На следующем этапе можно сделать портфель точнее: добавить реальные цены инструментов,
+        рассчитать примерное количество бумаг под ваш бюджет и показать возможную доходность по каждому сценарию.
+      </div>
+
+      <div class="instrument-block">
+        <div class="instrument-block-title">Что можно добавить дальше</div>
+        <ul>
+          <li>Расчёт количества акций и фондов под выбранную сумму.</li>
+          <li>Проверку актуальной цены каждого инструмента.</li>
+          <li>Сравнение брокеров: Сбер, Т-Банк, ВТБ, Альфа.</li>
+          <li>Кнопку “Сохранить мой портфель”.</li>
+        </ul>
+      </div>
+
+      <div class="buttons">
+        <button class="secondary" onclick="openProOffer()">Получить это в PRO</button>
+      </div>
+    </div>
+  `;
 }
 </script>
 </body>
