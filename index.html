@@ -1,932 +1,252 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>InvestPath AI</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InvestPath AI</title>
 
-  <style>
-    * { box-sizing: border-box; }
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, #07111f 0%, #0b1730 100%);
-      color: #fff;
-      padding: 14px;
-    }
+<style>
+body {
+  margin:0;
+  font-family: Arial;
+  background:#0f172a;
+  color:white;
+}
 
-    .app {
-      max-width: 430px;
-      margin: 0 auto;
-    }
+.app {
+  max-width:420px;
+  margin:auto;
+  padding:20px;
+}
 
-    .card {
-      background: rgba(12, 24, 45, 0.95);
-      border: 1px solid rgba(80, 110, 170, 0.28);
-      border-radius: 18px;
-      padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.22);
-    }
+.card {
+  background:#111827;
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:14px;
+}
 
-    .title {
-      font-size: 22px;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
+.title {
+  font-size:18px;
+  font-weight:bold;
+}
 
-    .subtitle {
-      color: #c8d4e7;
-      line-height: 1.45;
-      font-size: 14px;
-    }
+.subtitle {
+  opacity:0.6;
+  font-size:13px;
+}
 
-    .bubble {
-      background: rgba(17, 30, 54, 0.95);
-      border: 1px solid rgba(84,112,163,0.3);
-      border-radius: 18px;
-      padding: 14px;
-      line-height: 1.45;
-      white-space: pre-line;
-      margin-bottom: 12px;
-    }
+.bubble {
+  background:#1f2937;
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:10px;
+}
 
-    .section-title {
-      margin: 16px 0 10px;
-      font-size: 16px;
-      font-weight: 700;
-    }
+.buttons button {
+  width:100%;
+  margin-top:8px;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-    .buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 12px;
-    }
+button {
+  background:#2563eb;
+  color:white;
+}
 
-    button {
-      width: 100%;
-      border: none;
-      border-radius: 14px;
-      background: #2f6df6;
-      color: #fff;
-      padding: 14px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-    }
+button.secondary {
+  background:#1f2937;
+}
 
-    button.secondary {
-      background: #1c2b46;
-      border: 1px solid #32476d;
-      color: #d9e5f6;
-    }
+.hidden {
+  display:none;
+}
 
-    button.ghost {
-      background: #13233d;
-      border: 1px solid #37507a;
-      color: #dce8ff;
-    }
+/* MODAL */
 
-    input {
-      width: 100%;
-      border: 1px solid #334866;
-      background: #0a1324;
-      color: #fff;
-      border-radius: 14px;
-      padding: 14px;
-      font-size: 15px;
-      outline: none;
-      margin-top: 10px;
-    }
+.modal {
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#111827;
+  border-top-left-radius:20px;
+  border-top-right-radius:20px;
+  padding:20px;
+  animation:slideUp 0.3s ease;
+}
 
-    .hidden { display: none !important; }
+@keyframes slideUp {
+  from { transform:translateY(100%); }
+  to { transform:translateY(0); }
+}
 
-    .portfolio-card,
-    .ai-variant-card,
-    .scenario-detail-card {
-      background: #0b1220;
-      border: 1px solid #22304a;
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 12px;
-    }
+.close-btn {
+  background:none;
+  border:none;
+  color:white;
+  font-size:20px;
+  cursor:pointer;
+}
 
-    .portfolio-card h4,
-    .ai-variant-card h4,
-    .scenario-detail-card h4 {
-      margin: 0 0 6px;
-      font-size: 17px;
-    }
+.instrument-block {
+  margin-top:10px;
+  background:#1f2937;
+  padding:10px;
+  border-radius:10px;
+}
 
-    .muted,
-    .portfolio-subtitle,
-    .ai-variant-subtitle {
-      color: #9eb1cf;
-      font-size: 14px;
-      line-height: 1.45;
-      margin-bottom: 10px;
-    }
+.instrument-block-title {
+  font-weight:bold;
+  margin-bottom:6px;
+}
 
-    ul {
-      margin: 0;
-      padding-left: 18px;
-    }
-
-    li {
-      margin-bottom: 6px;
-      color: #dbe4f0;
-      line-height: 1.4;
-    }
-
-    .warn {
-      background: rgba(32,45,71,0.95);
-      border: 1px solid rgba(86,108,144,0.4);
-      border-radius: 16px;
-      padding: 14px;
-      color: #dce7f8;
-      line-height: 1.45;
-    }
-
-    .progress-wrap { margin-top: 12px; }
-
-    .progress-label {
-      font-size: 12px;
-      color: #9eb1cf;
-      margin-bottom: 6px;
-    }
-
-    .progress {
-      height: 8px;
-      background: #12203a;
-      border-radius: 999px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #2f6df6, #4ea2ff);
-      transition: width 0.3s ease;
-    }
-
-    .typing {
-      display: inline-flex;
-      gap: 4px;
-      margin-top: 8px;
-    }
-
-    .typing span {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #8fb3ff;
-      animation: blink 1.2s infinite;
-    }
-
-    .typing span:nth-child(2) { animation-delay: 0.2s; }
-    .typing span:nth-child(3) { animation-delay: 0.4s; }
-
-    @keyframes blink {
-      0%, 80%, 100% { opacity: 0.25; transform: scale(0.9); }
-      40% { opacity: 1; transform: scale(1); }
-    }
-
-    .instrument-block {
-      margin-top: 12px;
-      padding: 12px;
-      background: rgba(18,30,52,0.75);
-      border: 1px solid #283754;
-      border-radius: 12px;
-    }
-
-    .instrument-block-title {
-      font-size: 14px;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
-
-    .scenario-badge {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: #132a50;
-      border: 1px solid #34548b;
-      color: #dce8ff;
-      font-size: 12px;
-      margin-bottom: 10px;
-    }
-
-    .preview-lock {
-      color: #f7d58c;
-      font-size: 13px;
-      margin-top: 8px;
-    }
-
-    .pro-feature {
-      background: rgba(18,30,52,0.75);
-      border: 1px solid #283754;
-      border-radius: 12px;
-      padding: 12px;
-      margin-top: 10px;
-      color: #dbe4f0;
-      line-height: 1.4;
-    }
-
-    .pro-price {
-      margin-top: 18px;
-      padding: 16px;
-      background: linear-gradient(90deg, #1d4ed8, #2563eb);
-      border-radius: 14px;
-      font-size: 28px;
-      font-weight: 900;
-      text-align: center;
-    }
-
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(2, 6, 23, 0.78);
-      backdrop-filter: blur(8px);
-      z-index: 9999;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      padding: 14px;
-    }
-
-    .modal-content {
-      width: 100%;
-      max-width: 430px;
-      max-height: 88vh;
-      overflow-y: auto;
-      background: linear-gradient(180deg, #0f1b33 0%, #081224 100%);
-      border: 1px solid rgba(96, 130, 190, 0.35);
-      border-radius: 22px;
-      padding: 16px;
-      box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.55);
-      animation: modalUp 0.28s ease;
-    }
-
-    @keyframes modalUp {
-      from { transform: translateY(40px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-      margin-bottom: 12px;
-    }
-
-    .close-btn {
-      width: 42px;
-      height: 42px;
-      padding: 0;
-      border-radius: 50%;
-      background: #1f2937;
-      font-size: 24px;
-      line-height: 1;
-    }
-
-    .portfolio-summary {
-      background: rgba(47, 109, 246, 0.16);
-      border: 1px solid rgba(96, 165, 250, 0.35);
-      border-radius: 16px;
-      padding: 14px;
-      margin-bottom: 12px;
-    }
-
-    .portfolio-pill {
-      display: inline-block;
-      padding: 6px 10px;
-      margin: 4px 4px 0 0;
-      border-radius: 999px;
-      background: #132a50;
-      border: 1px solid #34548b;
-      color: #dce8ff;
-      font-size: 12px;
-    }
-  </style>
+.warn {
+  background:#1e293b;
+  padding:10px;
+  border-radius:10px;
+  margin-top:10px;
+  font-size:13px;
+}
+</style>
 </head>
 
 <body>
+
 <div class="app">
 
-  <div class="card">
-    <div class="title">InvestPath AI</div>
-    <div class="subtitle">Подбор сценариев инвестирования под ваши цели.</div>
+<div class="card">
+  <div class="title">InvestPath AI</div>
+  <div class="subtitle">Подбор инвестиционного портфеля</div>
+</div>
+
+<div class="card">
+  <div class="bubble">
+    Это персональный советчик по инвестициям ваших средств.
   </div>
 
-  <div id="startBlock" class="card">
-    <div class="bubble">Это персональный советчик по инвестициям ваших средств.</div>
-    <div class="buttons">
-      <button onclick="startFlow()">Начать</button>
-    </div>
+  <div class="buttons">
+    <button onclick="buildPortfolio()">Собрать портфель под мою сумму</button>
   </div>
-
-  <div id="questionBlock" class="card hidden">
-    <div id="assistantBubble" class="bubble"></div>
-    <div id="answerButtons" class="buttons"></div>
-
-    <div id="textInputWrap" class="hidden">
-      <input id="textAnswerInput" type="text" placeholder="Введите ответ" />
-      <div class="buttons">
-        <button onclick="submitTextAnswer()">Продолжить</button>
-      </div>
-    </div>
-
-    <div id="customInputWrap" class="hidden">
-      <input id="customInput" type="text" placeholder="Введите свой вариант" />
-      <div class="buttons">
-        <button onclick="submitCustomAnswer()">Сохранить</button>
-      </div>
-    </div>
-
-    <div class="progress-wrap">
-      <div id="progressLabel" class="progress-label">Шаг 1 из 7</div>
-      <div class="progress">
-        <div id="progressFill" class="progress-fill"></div>
-      </div>
-    </div>
-  </div>
-
-  <div id="strategyBlock" class="card hidden">
-    <div id="strategyIntro" class="bubble"></div>
-    <div id="strategyButtons"></div>
-  </div>
-
-  <div id="portfolioBlock" class="card hidden">
-    <div id="portfolioIntro" class="bubble"></div>
-    <div id="portfolioList"></div>
-  </div>
-
-  <div id="finalBlock" class="card hidden">
-    <div class="warn">
-      Это примерный учебный портфель, а не индивидуальная инвестиционная рекомендация.
-      Перед покупкой проверьте актуальные цены, комиссии и доступность инструментов у брокера.
-    </div>
-
-    <div class="buttons">
-      <button onclick="requestAiAnalysis()">Запросить AI-разбор</button>
-    </div>
-
-    <div id="aiAnalysisBox" class="bubble hidden"></div>
-
-    <div id="aiVariantsWrap" class="hidden">
-      <div class="section-title">Подходящие варианты структуры</div>
-      <div id="aiVariantsList"></div>
-
-      <div class="section-title">Сценарии поведения портфеля</div>
-      <div id="scenarioButtons" class="buttons"></div>
-      <div id="scenarioDetailBox" class="hidden"></div>
-
-      <div id="proOfferBox" class="card hidden">
-        <div class="title">Нужно больше вариантов?</div>
-        <div class="subtitle" id="proOfferText">
-          В PRO-версии можно открыть расширенный подбор.
-        </div>
-        <div class="buttons">
-          <button class="secondary" onclick="openProOffer()">Открыть PRO-подбор</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="proScreen" class="card hidden">
-    <div class="title">InvestPath AI PRO</div>
-    <div class="subtitle">
-      Расширенный подбор портфелей, полные сценарии и больше инструментов под ваш бюджет.
-    </div>
-
-    <div class="pro-feature">✅ 5–10 вариантов портфелей</div>
-    <div class="pro-feature">✅ Полный осторожный сценарий</div>
-    <div class="pro-feature">✅ Полный позитивный сценарий</div>
-    <div class="pro-feature">✅ Больше конкретных бумаг и фондов</div>
-    <div class="pro-feature">✅ План действий под ваш срок и сумму</div>
-
-    <div class="pro-price">299 ₽</div>
-
-    <div class="buttons">
-      <button onclick="buyPro()">Получить PRO</button>
-      <button class="secondary" onclick="closeProScreen()">Назад</button>
-    </div>
-  </div>
+</div>
 
 </div>
 
+<!-- PORTFOLIO MODAL -->
 <div id="portfolioModal" class="modal hidden">
-  <div class="modal-content">
-    <div class="modal-header">
-      <div>
-        <div class="title">Готовый портфель</div>
-        <div class="subtitle" id="portfolioModalSubtitle">Под вашу сумму</div>
-      </div>
-      <button class="close-btn" onclick="closePortfolioModal()">×</button>
-    </div>
+  <div style="display:flex; justify-content:space-between;">
+    <div class="title">Готовый портфель</div>
+    <button class="close-btn" onclick="closePortfolio()">×</button>
+  </div>
 
-    <div id="portfolioModalBody"></div>
+  <div id="portfolioContent"></div>
 
-    <div class="buttons">
-      <button onclick="savePortfolio()">Сохранить портфель</button>
-      <button class="secondary" onclick="openProOffer()">Получить точный расчёт в PRO</button>
-      <button class="secondary" onclick="closePortfolioModal()">Закрыть</button>
-    </div>
+  <div class="buttons">
+    <button onclick="showImprovement()">Что можно улучшить?</button>
+    <button class="secondary" onclick="openPro()">PRO версия</button>
+  </div>
+</div>
+
+<!-- IMPROVEMENT MODAL -->
+<div id="improvementModal" class="modal hidden">
+  <div style="display:flex; justify-content:space-between;">
+    <div class="title">Что можно улучшить?</div>
+    <button class="close-btn" onclick="closeImprovement()">×</button>
+  </div>
+
+  <div id="improvementContent"></div>
+
+  <div class="buttons">
+    <button class="secondary" onclick="openPro()">Получить в PRO</button>
   </div>
 </div>
 
 <script>
-const tg = window.Telegram?.WebApp;
-if (tg) {
-  tg.ready();
-  tg.expand();
-}
-
-const API_URL = "https://investpath-backend.onrender.com/analyze";
-
-const profile = {
-  name: "",
-  term: "",
-  amount: "",
-  goal: "",
-  risk: "",
-  strategy: "",
-  portfolio: ""
-};
-
-let awaitingText = null;
-let awaitingCustom = null;
-let scenarioData = null;
-
-const totalSteps = 7;
-
-const strategies = {
-  "Консервативный": [
-    ["conservative", "Стратегия 1 — Консервативная", "Фокус на сохранении капитала"],
-    ["moderate_conservative", "Стратегия 2 — Умеренно-консервативная", "Немного больше потенциала роста"],
-    ["income_conservative", "Стратегия 3 — Доходная", "С упором на стабильность"]
-  ],
-  "Сбалансированный": [
-    ["balanced", "Стратегия 1 — Сбалансированная", "Баланс роста и защиты"],
-    ["growth_balanced", "Стратегия 2 — Умеренный рост", "Чуть больше акцента на рост"],
-    ["diversified_balanced", "Стратегия 3 — Диверсифицированная", "Широкое распределение активов"]
-  ],
-  "Агрессивный": [
-    ["aggressive", "Стратегия 1 — Агрессивная", "Высокий потенциал роста"],
-    ["active_growth", "Стратегия 2 — Активный рост", "Упор на активы роста"],
-    ["high_return", "Стратегия 3 — Высокодоходная", "Максимум потенциала"]
-  ]
-};
-
-function updateProgress(step) {
-  document.getElementById("progressLabel").textContent = `Шаг ${step} из ${totalSteps}`;
-  document.getElementById("progressFill").style.width = `${(step / totalSteps) * 100}%`;
-}
-
-function startFlow() {
-  document.getElementById("startBlock").classList.add("hidden");
-  document.getElementById("questionBlock").classList.remove("hidden");
-  askName();
-}
-
-function setQuestion(text) {
-  document.getElementById("assistantBubble").textContent = text;
-  document.getElementById("answerButtons").innerHTML = "";
-  document.getElementById("textInputWrap").classList.add("hidden");
-  document.getElementById("customInputWrap").classList.add("hidden");
-  awaitingText = null;
-  awaitingCustom = null;
-}
-
-function renderButtons(items) {
-  const wrap = document.getElementById("answerButtons");
-  wrap.innerHTML = "";
-  items.forEach(item => {
-    const btn = document.createElement("button");
-    btn.textContent = item.label;
-    if (item.secondary) btn.classList.add("secondary");
-    btn.onclick = item.onClick;
-    wrap.appendChild(btn);
-  });
-}
-
-function askName() {
-  updateProgress(1);
-  setQuestion("Как я могу к вам обращаться?");
-  awaitingText = "name";
-  document.getElementById("textInputWrap").classList.remove("hidden");
-  document.getElementById("textAnswerInput").value = "";
-}
-
-function submitTextAnswer() {
-  const value = document.getElementById("textAnswerInput").value.trim();
-  if (!value) return;
-  profile.name = value;
-  askTerm();
-}
-
-function askTerm() {
-  updateProgress(2);
-  setQuestion(`Приятно познакомиться, ${profile.name}. На какой срок вы планируете инвестировать?`);
-  renderButtons([
-    { label: "5 месяцев", onClick: () => saveTerm("5 месяцев") },
-    { label: "1 год", onClick: () => saveTerm("1 год") },
-    { label: "2 года", onClick: () => saveTerm("2 года") },
-    { label: "Другой срок", secondary: true, onClick: () => showCustom("term", "Например: 8 месяцев") }
-  ]);
-}
-
-function saveTerm(value) {
-  profile.term = value;
-  askAmount();
-}
-
-function askAmount() {
-  updateProgress(3);
-  setQuestion("Какую сумму вы планируете инвестировать?");
-  renderButtons([
-    { label: "5 000–10 000 рублей", onClick: () => saveAmount("5 000–10 000 рублей") },
-    { label: "10 000–30 000 рублей", onClick: () => saveAmount("10 000–30 000 рублей") },
-    { label: "Другая сумма", secondary: true, onClick: () => showCustom("amount", "Например: 75 000 рублей") }
-  ]);
-}
-
-function saveAmount(value) {
-  profile.amount = value;
-  askGoal();
-}
-
-function askGoal() {
-  updateProgress(4);
-  setQuestion("Какая у вас цель инвестирования?");
-  renderButtons([
-    { label: "Сбережение средств", onClick: () => saveGoal("Сбережение средств") },
-    { label: "Приумножение капитала", onClick: () => saveGoal("Приумножение капитала") },
-    { label: "Другая цель", secondary: true, onClick: () => showCustom("goal", "Например: накопить на квартиру") }
-  ]);
-}
-
-function saveGoal(value) {
-  profile.goal = value;
-  askRisk();
-}
-
-function askRisk() {
-  updateProgress(5);
-  setQuestion("Какой стиль вам ближе?");
-  renderButtons([
-    { label: "Консервативный", onClick: () => saveRisk("Консервативный") },
-    { label: "Сбалансированный", onClick: () => saveRisk("Сбалансированный") },
-    { label: "Агрессивный", onClick: () => saveRisk("Агрессивный") }
-  ]);
-}
-
-function saveRisk(value) {
-  profile.risk = value;
-  showStrategies();
-}
-
-function showCustom(type, placeholder) {
-  awaitingCustom = type;
-  document.getElementById("customInputWrap").classList.remove("hidden");
-  document.getElementById("customInput").value = "";
-  document.getElementById("customInput").placeholder = placeholder;
-}
-
-function submitCustomAnswer() {
-  const value = document.getElementById("customInput").value.trim();
-  if (!value) return;
-
-  if (awaitingCustom === "term") {
-    profile.term = value;
-    askAmount();
-  } else if (awaitingCustom === "amount") {
-    profile.amount = value;
-    askGoal();
-  } else if (awaitingCustom === "goal") {
-    profile.goal = value;
-    askRisk();
-  }
-}
-
-function showStrategies() {
-  updateProgress(6);
-  document.getElementById("questionBlock").classList.add("hidden");
-  document.getElementById("strategyBlock").classList.remove("hidden");
-
-  document.getElementById("strategyIntro").textContent =
-    "Под ваш профиль я подобрал 3 стратегии. Выберите наиболее подходящую.";
-
-  const wrap = document.getElementById("strategyButtons");
-  wrap.innerHTML = "";
-
-  strategies[profile.risk].forEach(s => {
-    wrap.innerHTML += `
-      <div class="portfolio-card">
-        <h4>${s[1]}</h4>
-        <div class="portfolio-subtitle">${s[2]}</div>
-        <div class="buttons">
-          <button onclick="selectStrategy('${s[0]}')">Выбрать</button>
-        </div>
-      </div>
-    `;
-  });
-}
-
-function selectStrategy(key) {
-  profile.strategy = key;
-  showPortfolios();
-}
-
-function showPortfolios() {
-  updateProgress(7);
-  document.getElementById("strategyBlock").classList.add("hidden");
-  document.getElementById("portfolioBlock").classList.remove("hidden");
-
-  document.getElementById("portfolioIntro").textContent =
-    "Теперь выберите один из портфелей.";
-
-  const list = document.getElementById("portfolioList");
-  list.innerHTML = "";
-
-  const portfolios = [
-    ["portfolio_1", "Портфель 1", ["Акции — 25%", "Фонды — 30%", "Облигации — 25%", "Золото — 10%", "Кэш — 10%"]],
-    ["portfolio_2", "Портфель 2", ["Акции — 35%", "Фонды — 30%", "Облигации — 20%", "Золото — 5%", "Кэш — 10%"]],
-    ["portfolio_3", "Портфель 3", ["Акции — 30%", "ETF — 25%", "Облигации — 25%", "Золото — 10%", "Кэш — 10%"]]
-  ];
-
-  portfolios.forEach(p => {
-    list.innerHTML += `
-      <div class="portfolio-card">
-        <h4>${p[1]}</h4>
-        <ul>${p[2].map(x => `<li>${x}</li>`).join("")}</ul>
-        <div class="buttons">
-          <button onclick="selectPortfolio('${p[0]}')">Выбрать портфель</button>
-        </div>
-      </div>
-    `;
-  });
-}
-
-function selectPortfolio(key) {
-  profile.portfolio = key;
-  document.getElementById("portfolioBlock").classList.add("hidden");
-  document.getElementById("finalBlock").classList.remove("hidden");
-}
-
-function renderVariantBlocks(blocks) {
-  let html = "";
-  Object.entries(blocks || {}).forEach(([name, instruments]) => {
-    html += `
-      <div class="instrument-block">
-        <div class="instrument-block-title">${name}</div>
-        <ul>${instruments.map(i => `<li>${i}</li>`).join("")}</ul>
-      </div>
-    `;
-  });
-  return html;
-}
-
-async function requestAiAnalysis() {
-  const aiBox = document.getElementById("aiAnalysisBox");
-  const wrap = document.getElementById("aiVariantsWrap");
-  const list = document.getElementById("aiVariantsList");
-
-  aiBox.classList.remove("hidden");
-  aiBox.innerHTML = `Сейчас подготовлю персональный разбор выбранного варианта...
-<div class="typing"><span></span><span></span><span></span></div>`;
-
-  wrap.classList.add("hidden");
-  list.innerHTML = "";
-
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(profile)
-    });
-
-    const data = await res.json();
-
-    setTimeout(() => {
-      aiBox.textContent = data.analysis || "Разбор временно недоступен.";
-
-      if (data.variants) {
-        wrap.classList.remove("hidden");
-        list.innerHTML = data.variants.map(v => `
-          <div class="ai-variant-card">
-            <h4>${v.title}</h4>
-            <div class="ai-variant-subtitle">${v.subtitle || ""}</div>
-            ${renderVariantBlocks(v.blocks || {})}
-          </div>
-        `).join("");
-      }
-
-      if (data.scenarios) {
-        scenarioData = data.scenarios;
-        renderScenarioButtons();
-      }
-
-      if (data.pro_offer) {
-        document.getElementById("proOfferText").textContent = data.pro_offer.text;
-        document.getElementById("proOfferBox").classList.remove("hidden");
-      }
-    }, 2500);
-
-  } catch (e) {
-    aiBox.textContent = "Не удалось подключиться к AI-анализу.";
-  }
-}
-
-function renderScenarioButtons() {
-  const wrap = document.getElementById("scenarioButtons");
-  wrap.innerHTML = `
-    <button class="ghost" onclick="openScenario('base')">Базовый сценарий</button>
-    <button class="secondary" onclick="openScenario('safe')">Осторожный сценарий · PRO</button>
-    <button class="secondary" onclick="openScenario('positive')">Позитивный сценарий · PRO</button>
-  `;
-}
-
-function openScenario(type) {
-  const box = document.getElementById("scenarioDetailBox");
-  box.classList.remove("hidden");
-
-  if (type === "base") {
-    box.innerHTML = `
-      <div class="scenario-detail-card">
-        <div class="scenario-badge">Бесплатно</div>
-        <h4>Базовый сценарий</h4>
-
-        <div class="muted">${scenarioData?.base || "Сценарий временно недоступен."}</div>
-
-        <div class="instrument-block">
-          <div class="instrument-block-title">Что делать дальше</div>
-          <ul>
-            <li>Не вкладывать всю сумму сразу, а распределить вход на 2–3 части.</li>
-            <li>Сначала купить более стабильные инструменты: облигации, фонды или кэш-часть.</li>
-            <li>Акции добавлять постепенно, особенно если рынок волатилен.</li>
-            <li>Через 30 дней пересмотреть портфель и сравнить результат с планом.</li>
-          </ul>
-        </div>
-
-        <div class="instrument-block">
-          <div class="instrument-block-title">Пример порядка действий</div>
-          <ul>
-            <li>Шаг 1: открыть брокерское приложение.</li>
-            <li>Шаг 2: проверить комиссии и доступность выбранных инструментов.</li>
-            <li>Шаг 3: распределить сумму по структуре портфеля.</li>
-            <li>Шаг 4: сохранить портфель и вернуться к нему через месяц.</li>
-          </ul>
-        </div>
-
-        <div class="warn" style="margin-top:12px;">
-          Это не индивидуальная инвестиционная рекомендация. Перед покупкой проверьте актуальные цены, комиссии и риски.
-        </div>
-
-        <div class="buttons">
-          <button onclick="buildPortfolio()">Собрать портфель под мою сумму</button>
-          <button onclick="showNextImprovement()">Что можно улучшить?</button>
-          <button class="secondary" onclick="openProOffer()">Получить расширенный план в PRO</button>
-        </div>
-      </div>
-    `;
-  } else {
-    box.innerHTML = `
-      <div class="scenario-detail-card">
-        <div class="scenario-badge">Preview PRO</div>
-        <h4>${type === "safe" ? "Осторожный сценарий" : "Позитивный сценарий"}</h4>
-        <div class="muted">${scenarioData?.[type] || "Сценарий временно недоступен."}</div>
-        <div class="preview-lock">Полный разбор доступен в PRO.</div>
-        <div class="buttons">
-          <button class="secondary" onclick="openProOffer()">Открыть PRO</button>
-        </div>
-      </div>
-    `;
-  }
-}
 
 function buildPortfolio() {
-  const modal = document.getElementById("portfolioModal");
-  const subtitle = document.getElementById("portfolioModalSubtitle");
-  const body = document.getElementById("portfolioModalBody");
-
-  const amount = profile.amount || "10 000 рублей";
-  subtitle.textContent = `Под сумму: ${amount}`;
-
-  body.innerHTML = `
-    <div class="portfolio-summary">
-      <div class="muted">
-        Ниже пример структуры под выбранную сумму. Это учебный сценарий, а не индивидуальная инвестиционная рекомендация.
-      </div>
-      <div style="margin-top:10px;">
-        <span class="portfolio-pill">Акции</span>
-        <span class="portfolio-pill">Фонды</span>
-        <span class="portfolio-pill">Облигации</span>
-        <span class="portfolio-pill">Кэш</span>
-      </div>
-    </div>
-
+  document.getElementById("portfolioContent").innerHTML = `
     <div class="instrument-block">
       <div class="instrument-block-title">Акции</div>
       <ul>
-        <li>Сбер — примерная доля 15–20%</li>
-        <li>Лукойл — примерная доля 10–15%</li>
+        <li>Сбер</li>
+        <li>Лукойл</li>
       </ul>
     </div>
 
     <div class="instrument-block">
       <div class="instrument-block-title">Фонды</div>
       <ul>
-        <li>TMOS — примерная доля 20–30%</li>
-        <li>SBMX — примерная доля 10–20%</li>
+        <li>TMOS</li>
       </ul>
     </div>
 
     <div class="instrument-block">
       <div class="instrument-block-title">Облигации</div>
       <ul>
-        <li>ОФЗ 26238 — примерная доля 20–30%</li>
+        <li>ОФЗ 26238</li>
+      </ul>
+    </div>
+
+    <div class="warn">
+      Это базовый сценарий портфеля.
+    </div>
+  `;
+
+  document.getElementById("portfolioModal").classList.remove("hidden");
+}
+
+function closePortfolio() {
+  document.getElementById("portfolioModal").classList.add("hidden");
+}
+
+function showImprovement() {
+  document.getElementById("improvementContent").innerHTML = `
+    <div class="instrument-block">
+      <div class="instrument-block-title">Точный расчёт</div>
+      <ul>
+        <li>Количество акций под бюджет</li>
+        <li>Распределение средств</li>
       </ul>
     </div>
 
     <div class="instrument-block">
-      <div class="instrument-block-title">Кэш / резерв</div>
+      <div class="instrument-block-title">Реальные цены</div>
       <ul>
-        <li>Оставить 10–15% для докупки при просадке.</li>
+        <li>Актуальные котировки</li>
+        <li>Обновление портфеля</li>
       </ul>
     </div>
 
-    <div class="warn" style="margin-top:12px;">
-      Перед покупкой проверьте актуальные цены, комиссии и доступность инструментов у брокера.
+    <div class="instrument-block">
+      <div class="instrument-block-title">Брокеры</div>
+      <ul>
+        <li>Сравнение комиссий</li>
+      </ul>
+    </div>
+
+    <div class="warn">
+      Эти функции доступны в PRO версии.
     </div>
   `;
 
-  modal.classList.remove("hidden");
+  document.getElementById("improvementModal").classList.remove("hidden");
 }
 
-function closePortfolioModal() {
-  document.getElementById("portfolioModal").classList.add("hidden");
+function closeImprovement() {
+  document.getElementById("improvementModal").classList.add("hidden");
 }
 
-function showNextImprovement() {
-  const box = document.getElementById("scenarioDetailBox");
-
-  box.innerHTML += `
-    <div class="scenario-detail-card">
-      <h4>Следующее улучшение портфеля</h4>
-
-      <div class="muted">
-        На следующем этапе можно сделать портфель точнее: добавить реальные цены инструментов,
-        рассчитать примерное количество бумаг под ваш бюджет и показать возможную доходность по каждому сценарию.
-      </div>
-
-      <div class="instrument-block">
-        <div class="instrument-block-title">Что можно добавить дальше</div>
-        <ul>
-          <li>Расчёт количества акций и фондов под выбранную сумму.</li>
-          <li>Проверку актуальной цены каждого инструмента.</li>
-          <li>Сравнение брокеров: Сбер, Т-Банк, ВТБ, Альфа.</li>
-          <li>Кнопку “Сохранить мой портфель”.</li>
-        </ul>
-      </div>
-
-      <div class="buttons">
-        <button class="secondary" onclick="openProOffer()">Получить это в PRO</button>
-      </div>
-    </div>
-  `;
+function openPro() {
+  alert("PRO версия скоро 🚀");
 }
 
-function savePortfolio() {
-  if (window.Telegram && Telegram.WebApp) {
-    Telegram.WebApp.showAlert("Портфель сохранён. Позже здесь будет личный кабинет и история портфелей.");
-  } else {
-    alert("Портфель сохранён. Позже здесь будет личный кабинет и история портфелей.");
-  }
-}
-
-function openProOffer() {
-  closePortfolioModal();
-  document.getElementById("finalBlock").classList.add("hidden");
-  document.getElementById("proScreen").classList.remove("hidden");
-}
-
-function closeProScreen() {
-  document.getElementById("proScreen").classList.add("hidden");
-  document.getElementById("finalBlock").classList.remove("hidden");
-}
-
-function buyPro() {
-  if (window.Telegram && Telegram.WebApp) {
-    Telegram.WebApp.showAlert("Оплата PRO скоро будет доступна. Следующий шаг — подключить Telegram Payments.");
-  } else {
-    alert("Оплата PRO скоро будет доступна.");
-  }
-}
 </script>
+
 </body>
 </html>
