@@ -708,88 +708,78 @@ function openScenario(type) {
         </div>
 
         <div class="buttons">
+          <button onclick="buildPortfolio()">Собрать портфель под мою сумму</button>
           <button onclick="showNextImprovement()">Что можно улучшить?</button>
           <button class="secondary" onclick="openProOffer()">Получить расширенный план в PRO</button>
         </div>
       </div>
     `;
-  } else if (type === "safe") {
-    box.innerHTML = `
-      <div class="scenario-detail-card">
-        <div class="scenario-badge">Preview PRO</div>
-        <h4>Осторожный сценарий</h4>
-
-        <div class="muted">
-          ${scenarioData?.safe || "Сценарий временно недоступен."}
-        </div>
-
-        <div class="instrument-block">
-          <div class="instrument-block-title">Краткий смысл</div>
-          <ul>
-            <li>Снизить долю рискованных активов.</li>
-            <li>Увеличить защитную часть портфеля.</li>
-            <li>Оставить часть денег в кэше для докупки.</li>
-          </ul>
-        </div>
-
-        <div class="preview-lock">
-          Полный план защиты портфеля, проценты перераспределения и список инструментов доступны в PRO.
-        </div>
-
-        <div class="buttons">
-          <button class="secondary" onclick="openProOffer()">Открыть PRO</button>
-        </div>
-      </div>
-    `;
-  } else if (type === "positive") {
-    box.innerHTML = `
-      <div class="scenario-detail-card">
-        <div class="scenario-badge">Preview PRO</div>
-        <h4>Позитивный сценарий</h4>
-
-        <div class="muted">
-          ${scenarioData?.positive || "Сценарий временно недоступен."}
-        </div>
-
-        <div class="instrument-block">
-          <div class="instrument-block-title">Краткий смысл</div>
-          <ul>
-            <li>Увеличить долю активов роста.</li>
-            <li>Сохранять часть защитных инструментов.</li>
-            <li>Не заходить в рынок всей суммой сразу.</li>
-          </ul>
-        </div>
-
-        <div class="preview-lock">
-          Полный план роста, ребалансировка и расширенный список бумаг доступны в PRO.
-        </div>
-
-        <div class="buttons">
-          <button class="secondary" onclick="openProOffer()">Открыть PRO</button>
-        </div>
-      </div>
-    `;
-  }
-}
-
-function openProOffer() {
-  document.getElementById("finalBlock").classList.add("hidden");
-  document.getElementById("proScreen").classList.remove("hidden");
-}
-
-function closeProScreen() {
-  document.getElementById("proScreen").classList.add("hidden");
-  document.getElementById("finalBlock").classList.remove("hidden");
-}
-
-function buyPro() {
-  if (window.Telegram && Telegram.WebApp) {
-    Telegram.WebApp.showAlert("Оплата PRO скоро будет доступна. Следующий шаг — подключить Telegram Payments.");
   } else {
-    alert("Оплата PRO скоро будет доступна.");
+    box.innerHTML = `
+      <div class="scenario-detail-card">
+        <div class="scenario-badge">Preview PRO</div>
+        <h4>${type === "safe" ? "Осторожный сценарий" : "Позитивный сценарий"}</h4>
+        <div class="muted">${scenarioData?.[type] || "Сценарий временно недоступен."}</div>
+        <div class="preview-lock">Полный разбор доступен в PRO.</div>
+        <div class="buttons">
+          <button class="secondary" onclick="openProOffer()">Открыть PRO</button>
+        </div>
+      </div>
+    `;
   }
 }
-  function showNextImprovement() {
+
+function buildPortfolio() {
+  const box = document.getElementById("scenarioDetailBox");
+  const amount = profile.amount || "10 000 рублей";
+
+  box.innerHTML += `
+    <div class="scenario-detail-card">
+      <h4>Готовый портфель под сумму: ${amount}</h4>
+
+      <div class="instrument-block">
+        <div class="instrument-block-title">Акции</div>
+        <ul>
+          <li>Сбер — примерная доля 15–20%</li>
+          <li>Лукойл — примерная доля 10–15%</li>
+        </ul>
+      </div>
+
+      <div class="instrument-block">
+        <div class="instrument-block-title">Фонды</div>
+        <ul>
+          <li>TMOS — примерная доля 20–30%</li>
+          <li>SBMX — примерная доля 10–20%</li>
+        </ul>
+      </div>
+
+      <div class="instrument-block">
+        <div class="instrument-block-title">Облигации</div>
+        <ul>
+          <li>ОФЗ 26238 — примерная доля 20–30%</li>
+        </ul>
+      </div>
+
+      <div class="instrument-block">
+        <div class="instrument-block-title">Кэш / резерв</div>
+        <ul>
+          <li>Оставить 10–15% для докупки при просадке.</li>
+        </ul>
+      </div>
+
+      <div class="warn" style="margin-top:12px;">
+        Расчёт примерный. Перед покупкой проверьте актуальные цены, комиссии и доступность инструментов у брокера.
+      </div>
+
+      <div class="buttons">
+        <button onclick="savePortfolio()">Сохранить портфель</button>
+        <button class="secondary" onclick="openProOffer()">Получить точный расчёт в PRO</button>
+      </div>
+    </div>
+  `;
+}
+
+function showNextImprovement() {
   const box = document.getElementById("scenarioDetailBox");
 
   box.innerHTML += `
@@ -816,6 +806,32 @@ function buyPro() {
       </div>
     </div>
   `;
+}
+
+function savePortfolio() {
+  if (window.Telegram && Telegram.WebApp) {
+    Telegram.WebApp.showAlert("Портфель сохранён. Позже здесь будет личный кабинет и история портфелей.");
+  } else {
+    alert("Портфель сохранён. Позже здесь будет личный кабинет и история портфелей.");
+  }
+}
+
+function openProOffer() {
+  document.getElementById("finalBlock").classList.add("hidden");
+  document.getElementById("proScreen").classList.remove("hidden");
+}
+
+function closeProScreen() {
+  document.getElementById("proScreen").classList.add("hidden");
+  document.getElementById("finalBlock").classList.remove("hidden");
+}
+
+function buyPro() {
+  if (window.Telegram && Telegram.WebApp) {
+    Telegram.WebApp.showAlert("Оплата PRO скоро будет доступна. Следующий шаг — подключить Telegram Payments.");
+  } else {
+    alert("Оплата PRO скоро будет доступна.");
+  }
 }
 </script>
 </body>
