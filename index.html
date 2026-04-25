@@ -320,6 +320,9 @@
   <div class="card">
     <div class="title">InvestPath AI</div>
     <div class="subtitle">Подбор сценариев инвестирования под ваши цели.</div>
+    <div class="buttons">
+      <button class="secondary" onclick="openCabinet()">Мой кабинет</button>
+    </div>
   </div>
 
   <div id="startBlock" class="card">
@@ -454,6 +457,26 @@
     <div class="buttons">
       <button class="secondary" onclick="openProOffer()">Получить это в PRO</button>
       <button class="secondary" onclick="closeImprovementModal()">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<div id="cabinetModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div>
+        <div class="title">Мой кабинет</div>
+        <div class="subtitle">Ваш сохранённый инвестиционный профиль</div>
+      </div>
+      <button class="close-btn" onclick="closeCabinet()">×</button>
+    </div>
+
+    <div id="cabinetBody"></div>
+
+    <div class="buttons">
+      <button onclick="saveProfileToCabinet()">Сохранить текущий профиль</button>
+      <button class="secondary" onclick="clearCabinet()">Очистить кабинет</button>
+      <button class="secondary" onclick="closeCabinet()">Закрыть</button>
     </div>
   </div>
 </div>
@@ -695,6 +718,7 @@ function selectPortfolio(key) {
   profile.portfolio = key;
   document.getElementById("portfolioBlock").classList.add("hidden");
   document.getElementById("finalBlock").classList.remove("hidden");
+  saveProfileToCabinet();
 }
 
 function renderVariantBlocks(blocks) {
@@ -949,16 +973,88 @@ function closeImprovementModal() {
 }
 
 function savePortfolio() {
+  saveProfileToCabinet();
+
   if (window.Telegram && Telegram.WebApp) {
-    Telegram.WebApp.showAlert("Портфель сохранён. Позже здесь будет личный кабинет и история портфелей.");
+    Telegram.WebApp.showAlert("Портфель сохранён в личном кабинете.");
   } else {
-    alert("Портфель сохранён. Позже здесь будет личный кабинет и история портфелей.");
+    alert("Портфель сохранён в личном кабинете.");
   }
+}
+
+function saveProfileToCabinet() {
+  const savedData = {
+    name: profile.name || "Не указано",
+    term: profile.term || "Не указано",
+    amount: profile.amount || "Не указано",
+    goal: profile.goal || "Не указано",
+    risk: profile.risk || "Не указано",
+    strategy: profile.strategy || "Не выбрана",
+    portfolio: profile.portfolio || "Не выбран",
+    savedAt: new Date().toLocaleString("ru-RU")
+  };
+
+  localStorage.setItem("investpath_profile", JSON.stringify(savedData));
+}
+
+function openCabinet() {
+  const modal = document.getElementById("cabinetModal");
+  const body = document.getElementById("cabinetBody");
+  const saved = localStorage.getItem("investpath_profile");
+
+  if (!saved) {
+    body.innerHTML = `
+      <div class="portfolio-summary">
+        <div class="muted">
+          Пока нет сохранённого профиля. Пройдите опрос, выберите стратегию и портфель, затем сохраните результат.
+        </div>
+      </div>
+    `;
+  } else {
+    const data = JSON.parse(saved);
+
+    body.innerHTML = `
+      <div class="portfolio-summary">
+        <div class="muted">Сохранено: ${data.savedAt}</div>
+      </div>
+
+      <div class="instrument-block">
+        <div class="instrument-block-title">Профиль</div>
+        <ul>
+          <li>Имя: ${data.name}</li>
+          <li>Срок: ${data.term}</li>
+          <li>Сумма: ${data.amount}</li>
+          <li>Цель: ${data.goal}</li>
+          <li>Риск: ${data.risk}</li>
+        </ul>
+      </div>
+
+      <div class="instrument-block">
+        <div class="instrument-block-title">Выбор</div>
+        <ul>
+          <li>Стратегия: ${data.strategy}</li>
+          <li>Портфель: ${data.portfolio}</li>
+        </ul>
+      </div>
+    `;
+  }
+
+  modal.classList.remove("hidden");
+}
+
+function closeCabinet() {
+  document.getElementById("cabinetModal").classList.add("hidden");
+}
+
+function clearCabinet() {
+  localStorage.removeItem("investpath_profile");
+  openCabinet();
 }
 
 function openProOffer() {
   closePortfolioModal();
   closeImprovementModal();
+  closeCabinet();
   document.getElementById("finalBlock").classList.add("hidden");
   document.getElementById("proScreen").classList.remove("hidden");
 }
@@ -970,9 +1066,9 @@ function closeProScreen() {
 
 function buyPro() {
   if (window.Telegram && Telegram.WebApp) {
-    Telegram.WebApp.showAlert("Оплата PRO скоро будет доступна. Следующий шаг — подключить Telegram Payments.");
+    Telegram.WebApp.showAlert("Оплата PRO скоро будет доступна. Следующий шаг — подключить ЮKassa или ЮMoney.");
   } else {
-    alert("Оплата PRO скоро будет доступна.");
+    alert("Оплата PRO скоро будет доступна. Следующий шаг — подключить ЮKassa или ЮMoney.");
   }
 }
 </script>
