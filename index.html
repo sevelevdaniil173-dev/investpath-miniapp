@@ -412,10 +412,10 @@
     <div class="pro-feature">✅ Больше конкретных бумаг и фондов</div>
     <div class="pro-feature">✅ План действий под ваш срок и сумму</div>
 
-    <div class="pro-price">299 ₽</div>
+    <div class="pro-price">149 ₽</div>
 
     <div class="buttons">
-      <button onclick="buyPro()">Получить PRO</button>
+      <button onclick="buyPro()">Получить PRO за 149 ₽</button>
       <button class="secondary" onclick="closeProScreen()">Назад</button>
     </div>
   </div>
@@ -489,6 +489,7 @@ if (tg) {
 }
 
 const API_URL = "https://investpath-backend.onrender.com/analyze";
+const PAYMENT_URL = "ТВОЯ_ССЫЛКА_ЮКАССА";
 
 const profile = {
   name: "",
@@ -803,7 +804,6 @@ function openScenario(type) {
       <div class="scenario-detail-card">
         <div class="scenario-badge">Бесплатно</div>
         <h4>Базовый сценарий</h4>
-
         <div class="muted">${scenarioData?.base || "Сценарий временно недоступен."}</div>
 
         <div class="instrument-block">
@@ -814,20 +814,6 @@ function openScenario(type) {
             <li>Акции добавлять постепенно, особенно если рынок волатилен.</li>
             <li>Через 30 дней пересмотреть портфель и сравнить результат с планом.</li>
           </ul>
-        </div>
-
-        <div class="instrument-block">
-          <div class="instrument-block-title">Пример порядка действий</div>
-          <ul>
-            <li>Шаг 1: открыть брокерское приложение.</li>
-            <li>Шаг 2: проверить комиссии и доступность выбранных инструментов.</li>
-            <li>Шаг 3: распределить сумму по структуре портфеля.</li>
-            <li>Шаг 4: сохранить портфель и вернуться к нему через месяц.</li>
-          </ul>
-        </div>
-
-        <div class="warn" style="margin-top:12px;">
-          Это не индивидуальная инвестиционная рекомендация. Перед покупкой проверьте актуальные цены, комиссии и риски.
         </div>
 
         <div class="buttons">
@@ -864,12 +850,6 @@ function buildPortfolio() {
     <div class="portfolio-summary">
       <div class="muted">
         Ниже пример структуры под выбранную сумму. Это учебный сценарий, а не индивидуальная инвестиционная рекомендация.
-      </div>
-      <div style="margin-top:10px;">
-        <span class="portfolio-pill">Акции</span>
-        <span class="portfolio-pill">Фонды</span>
-        <span class="portfolio-pill">Облигации</span>
-        <span class="portfolio-pill">Кэш</span>
       </div>
     </div>
 
@@ -925,12 +905,6 @@ function showNextImprovement() {
         На следующем этапе портфель можно сделать точнее: добавить реальные цены,
         рассчитать количество бумаг под ваш бюджет и сравнить несколько сценариев.
       </div>
-      <div style="margin-top:10px;">
-        <span class="portfolio-pill">Цены</span>
-        <span class="portfolio-pill">Количество бумаг</span>
-        <span class="portfolio-pill">Брокеры</span>
-        <span class="portfolio-pill">PRO</span>
-      </div>
     </div>
 
     <div class="instrument-block">
@@ -961,7 +935,7 @@ function showNextImprovement() {
     </div>
 
     <div class="warn" style="margin-top:12px;">
-      Расширенный расчёт можно вынести в PRO: это будет логичная платная функция.
+      Расширенный расчёт можно вынести в PRO.
     </div>
   `;
 
@@ -974,7 +948,6 @@ function closeImprovementModal() {
 
 function savePortfolio() {
   saveProfileToCabinet();
-
   if (window.Telegram && Telegram.WebApp) {
     Telegram.WebApp.showAlert("Портфель сохранён в личном кабинете.");
   } else {
@@ -1065,11 +1038,16 @@ function closeProScreen() {
 }
 
 function buyPro() {
-  if (window.Telegram && Telegram.WebApp) {
-    Telegram.WebApp.showAlert("Оплата PRO скоро будет доступна. Следующий шаг — подключить ЮKassa или ЮMoney.");
-  } else {
-    alert("Оплата PRO скоро будет доступна. Следующий шаг — подключить ЮKassa или ЮMoney.");
+  if (PAYMENT_URL === "ТВОЯ_ССЫЛКА_ЮКАССА") {
+    if (window.Telegram && Telegram.WebApp) {
+      Telegram.WebApp.showAlert("Сначала вставьте ссылку ЮKassa в PAYMENT_URL.");
+    } else {
+      alert("Сначала вставьте ссылку ЮKassa в PAYMENT_URL.");
+    }
+    return;
   }
+
+  window.open(PAYMENT_URL, "_blank");
 }
 </script>
 </body>
