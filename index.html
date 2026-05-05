@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" id="htmlRoot">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -311,24 +311,57 @@
       color: #dce8ff;
       font-size: 12px;
     }
+
+
+    .lang-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .lang-grid button {
+      margin: 0;
+    }
+
+    .lang-note {
+      color: #9eb1cf;
+      font-size: 13px;
+      line-height: 1.45;
+      margin-top: 10px;
+    }
   </style>
 </head>
 
 <body>
-<div class="app">
+<div class="app" id="langApp">
+  <div class="card">
+    <div class="title">InvestPath AI</div>
+    <div class="subtitle">Выберите язык / Choose language / 选择语言 / Sprache wählen</div>
+    <div class="lang-grid">
+      <button onclick="setLang('ru')">Русский</button>
+      <button onclick="setLang('en')">English</button>
+      <button onclick="setLang('zh')">中文</button>
+      <button onclick="setLang('de')">Deutsch</button>
+    </div>
+    <div class="lang-note" id="autoLangNote"></div>
+  </div>
+</div>
+
+<div class="app hidden" id="mainApp">
 
   <div class="card">
     <div class="title">InvestPath AI</div>
-    <div class="subtitle">Подбор сценариев инвестирования под ваши цели.</div>
+    <div class="subtitle" data-i18n="appSubtitle">Подбор сценариев инвестирования под ваши цели.</div>
     <div class="buttons">
-      <button class="secondary" onclick="openCabinet()">Мой кабинет</button>
+      <button class="secondary" onclick="openCabinet()" data-i18n="cabinetBtn">Мой кабинет</button>
     </div>
   </div>
 
   <div id="startBlock" class="card">
-    <div class="bubble">Это персональный советчик по инвестициям ваших средств.</div>
+    <div class="bubble" data-i18n="startBubble">Это персональный советчик по инвестициям ваших средств.</div>
     <div class="buttons">
-      <button onclick="startFlow()">Начать</button>
+      <button onclick="startFlow()" data-i18n="startBtn">Начать</button>
     </div>
   </div>
 
@@ -339,14 +372,14 @@
     <div id="textInputWrap" class="hidden">
       <input id="textAnswerInput" type="text" placeholder="Введите ответ" />
       <div class="buttons">
-        <button onclick="submitTextAnswer()">Продолжить</button>
+        <button onclick="submitTextAnswer()" data-i18n="continueBtn">Продолжить</button>
       </div>
     </div>
 
     <div id="customInputWrap" class="hidden">
       <input id="customInput" type="text" placeholder="Введите свой вариант" />
       <div class="buttons">
-        <button onclick="submitCustomAnswer()">Сохранить</button>
+        <button onclick="submitCustomAnswer()" data-i18n="saveBtn">Сохранить</button>
       </div>
     </div>
 
@@ -370,8 +403,8 @@
 
   <div id="finalBlock" class="card hidden">
     <div class="warn">
-      Это примерный учебный портфель, а не индивидуальная инвестиционная рекомендация.
-      Перед покупкой проверьте актуальные цены, комиссии и доступность инструментов у брокера.
+      <span data-i18n="warningText">Это примерный учебный портфель, а не индивидуальная инвестиционная рекомендация.
+      Перед покупкой проверьте актуальные цены, комиссии и доступность инструментов у брокера.</span>
     </div>
 
     <div class="buttons">
@@ -381,15 +414,15 @@
     <div id="aiAnalysisBox" class="bubble hidden"></div>
 
     <div id="aiVariantsWrap" class="hidden">
-      <div class="section-title">Подходящие варианты структуры</div>
+      <div class="section-title" data-i18n="structureVariantsTitle">Подходящие варианты структуры</div>
       <div id="aiVariantsList"></div>
 
-      <div class="section-title">Сценарии поведения портфеля</div>
+      <div class="section-title" data-i18n="scenariosTitle">Сценарии поведения портфеля</div>
       <div id="scenarioButtons" class="buttons"></div>
       <div id="scenarioDetailBox" class="hidden"></div>
 
       <div id="proOfferBox" class="card hidden">
-        <div class="title">Нужно больше вариантов?</div>
+        <div class="title" data-i18n="moreVariantsTitle">Нужно больше вариантов?</div>
         <div class="subtitle" id="proOfferText">
           В PRO-версии можно открыть расширенный подбор.
         </div>
@@ -403,20 +436,20 @@
   <div id="proScreen" class="card hidden">
     <div class="title">InvestPath AI PRO</div>
     <div class="subtitle">
-      Расширенный подбор портфелей, полные сценарии и больше инструментов под ваш бюджет.
+      <span data-i18n="proSubtitle">Расширенный подбор портфелей, полные сценарии и больше инструментов под ваш бюджет.</span>
     </div>
 
-    <div class="pro-feature">✅ 5–10 вариантов портфелей</div>
-    <div class="pro-feature">✅ Полный осторожный сценарий</div>
-    <div class="pro-feature">✅ Полный позитивный сценарий</div>
-    <div class="pro-feature">✅ Больше конкретных бумаг и фондов</div>
-    <div class="pro-feature">✅ План действий под ваш срок и сумму</div>
+    <div class="pro-feature"><span data-i18n="proF1">✅ 5–10 вариантов портфелей</span></div>
+    <div class="pro-feature"><span data-i18n="proF2">✅ Полный осторожный сценарий</span></div>
+    <div class="pro-feature"><span data-i18n="proF3">✅ Полный позитивный сценарий</span></div>
+    <div class="pro-feature"><span data-i18n="proF4">✅ Больше конкретных бумаг и фондов</span></div>
+    <div class="pro-feature"><span data-i18n="proF5">✅ План действий под ваш срок и сумму</span></div>
 
     <div class="pro-price">149 ₽</div>
 
     <div class="buttons">
-      <button onclick="buyPro()">Получить PRO за 149 ₽</button>
-      <button class="secondary" onclick="closeProScreen()">Назад</button>
+      <button onclick="buyPro()" data-i18n="buyProBtn">Получить PRO за 149 ₽</button>
+      <button class="secondary" onclick="closeProScreen()" data-i18n="backBtn">Назад</button>
     </div>
   </div>
 
@@ -426,7 +459,7 @@
   <div class="modal-content">
     <div class="modal-header">
       <div>
-        <div class="title">Готовый портфель</div>
+        <div class="title" data-i18n="readyPortfolioTitle">Готовый портфель</div>
         <div class="subtitle" id="portfolioModalSubtitle">Под вашу сумму</div>
       </div>
       <button class="close-btn" onclick="closePortfolioModal()">×</button>
@@ -435,9 +468,9 @@
     <div id="portfolioModalBody"></div>
 
     <div class="buttons">
-      <button onclick="savePortfolio()">Сохранить портфель</button>
-      <button class="secondary" onclick="openProOffer()">Получить точный расчёт в PRO</button>
-      <button class="secondary" onclick="closePortfolioModal()">Закрыть</button>
+      <button onclick="savePortfolio()" data-i18n="savePortfolioBtn">Сохранить портфель</button>
+      <button class="secondary" onclick="openProOffer()" data-i18n="exactProBtn">Получить точный расчёт в PRO</button>
+      <button class="secondary" onclick="closePortfolioModal()" data-i18n="closeBtn">Закрыть</button>
     </div>
   </div>
 </div>
@@ -446,8 +479,8 @@
   <div class="modal-content">
     <div class="modal-header">
       <div>
-        <div class="title">Что можно улучшить?</div>
-        <div class="subtitle">Следующий уровень портфеля</div>
+        <div class="title" data-i18n="improveTitle">Что можно улучшить?</div>
+        <div class="subtitle" data-i18n="improveSubtitle">Следующий уровень портфеля</div>
       </div>
       <button class="close-btn" onclick="closeImprovementModal()">×</button>
     </div>
@@ -455,8 +488,8 @@
     <div id="improvementModalBody"></div>
 
     <div class="buttons">
-      <button class="secondary" onclick="openProOffer()">Получить это в PRO</button>
-      <button class="secondary" onclick="closeImprovementModal()">Закрыть</button>
+      <button class="secondary" onclick="openProOffer()" data-i18n="getThisProBtn">Получить это в PRO</button>
+      <button class="secondary" onclick="closeImprovementModal()" data-i18n="closeBtn">Закрыть</button>
     </div>
   </div>
 </div>
@@ -465,8 +498,8 @@
   <div class="modal-content">
     <div class="modal-header">
       <div>
-        <div class="title">Мой кабинет</div>
-        <div class="subtitle">Ваш сохранённый инвестиционный профиль</div>
+        <div class="title" data-i18n="cabinetTitle">Мой кабинет</div>
+        <div class="subtitle" data-i18n="cabinetSubtitle">Ваш сохранённый инвестиционный профиль</div>
       </div>
       <button class="close-btn" onclick="closeCabinet()">×</button>
     </div>
@@ -474,19 +507,134 @@
     <div id="cabinetBody"></div>
 
     <div class="buttons">
-      <button onclick="saveProfileToCabinet()">Сохранить текущий профиль</button>
-      <button class="secondary" onclick="clearCabinet()">Очистить кабинет</button>
-      <button class="secondary" onclick="closeCabinet()">Закрыть</button>
+      <button onclick="saveProfileToCabinet()" data-i18n="saveCurrentProfileBtn">Сохранить текущий профиль</button>
+      <button class="secondary" onclick="clearCabinet()" data-i18n="clearCabinetBtn">Очистить кабинет</button>
+      <button class="secondary" onclick="closeCabinet()" data-i18n="closeBtn">Закрыть</button>
     </div>
   </div>
 </div>
 
 <script>
+let currentLang = "ru";
+
+const I18N = {
+  ru: {
+    htmlLang: "ru", autoNote: "Можно выбрать язык вручную. Дальше весь интерфейс будет на выбранном языке.",
+    appSubtitle: "Подбор сценариев инвестирования под ваши цели.", cabinetBtn: "Мой кабинет", startBubble: "Это персональный советчик по инвестициям ваших средств.", startBtn: "Начать", continueBtn: "Продолжить", saveBtn: "Сохранить", backBtn: "Назад", closeBtn: "Закрыть",
+    structureVariantsTitle: "Подходящие варианты структуры", scenariosTitle: "Сценарии поведения портфеля", moreVariantsTitle: "Нужно больше вариантов?", warningText: "Это примерный учебный портфель, а не индивидуальная инвестиционная рекомендация.\nПеред покупкой проверьте актуальные цены, комиссии и доступность инструментов у брокера.",
+    proSubtitle: "Расширенный подбор портфелей, полные сценарии и больше инструментов под ваш бюджет.", proF1: "✅ 5–10 вариантов портфелей", proF2: "✅ Полный осторожный сценарий", proF3: "✅ Полный позитивный сценарий", proF4: "✅ Больше конкретных бумаг и фондов", proF5: "✅ План действий под ваш срок и сумму", buyProBtn: "Получить PRO за 149 ₽",
+    readyPortfolioTitle: "Готовый портфель", savePortfolioBtn: "Сохранить портфель", exactProBtn: "Получить точный расчёт в PRO", improveTitle: "Что можно улучшить?", improveSubtitle: "Следующий уровень портфеля", getThisProBtn: "Получить это в PRO", cabinetTitle: "Мой кабинет", cabinetSubtitle: "Ваш сохранённый инвестиционный профиль", saveCurrentProfileBtn: "Сохранить текущий профиль", clearCabinetBtn: "Очистить кабинет",
+    progress: (s,t)=>`Шаг ${s} из ${t}`, nameQ: "Как я могу к вам обращаться?", namePlaceholder: "Введите ответ", termQ: n=>`Приятно познакомиться, ${n}. На какой срок вы планируете инвестировать?`, amountQ: "Какую сумму вы планируете инвестировать?", goalQ: "Какая у вас цель инвестирования?", riskQ: "Какой стиль вам ближе?",
+    term5: "5 месяцев", term1: "1 год", term2: "2 года", otherTerm: "Другой срок", termPlaceholder: "Например: 8 месяцев", amount1: "5 000–10 000 рублей", amount2: "10 000–30 000 рублей", otherAmount: "Другая сумма", amountPlaceholder: "Например: 75 000 рублей", goalSave: "Сбережение средств", goalGrow: "Приумножение капитала", otherGoal: "Другая цель", goalPlaceholder: "Например: накопить на квартиру", riskLow: "Консервативный", riskMid: "Сбалансированный", riskHigh: "Агрессивный",
+    strategyIntro: "Под ваш профиль я подобрал 3 стратегии. Выберите наиболее подходящую.", selectBtn: "Выбрать", portfolioIntro: "Теперь выберите один из портфелей.", selectPortfolioBtn: "Выбрать портфель",
+    strategies: {low:[["conservative","Стратегия 1 — Консервативная","Фокус на сохранении капитала"],["moderate_conservative","Стратегия 2 — Умеренно-консервативная","Немного больше потенциала роста"],["income_conservative","Стратегия 3 — Доходная","С упором на стабильность"]], mid:[["balanced","Стратегия 1 — Сбалансированная","Баланс роста и защиты"],["growth_balanced","Стратегия 2 — Умеренный рост","Чуть больше акцента на рост"],["diversified_balanced","Стратегия 3 — Диверсифицированная","Широкое распределение активов"]], high:[["aggressive","Стратегия 1 — Агрессивная","Высокий потенциал роста"],["active_growth","Стратегия 2 — Активный рост","Упор на активы роста"],["high_return","Стратегия 3 — Высокодоходная","Максимум потенциала"]]},
+    portfolios: [["portfolio_1","Портфель 1",["Акции — 25%","Фонды — 30%","Облигации — 25%","Золото — 10%","Кэш — 10%"]],["portfolio_2","Портфель 2",["Акции — 35%","Фонды — 30%","Облигации — 20%","Золото — 5%","Кэш — 10%"]],["portfolio_3","Портфель 3",["Акции — 30%","ETF — 25%","Облигации — 25%","Золото — 10%","Кэш — 10%"]]],
+    aiLoading: "Сейчас подготовлю персональный разбор выбранного варианта...", aiUnavailable: "Разбор временно недоступен.", aiError: "Не удалось подключиться к AI-анализу.", baseScenario: "Базовый сценарий", safeScenario: "Осторожный сценарий · PRO", positiveScenario: "Позитивный сценарий · PRO", free: "Бесплатно", previewPro: "Preview PRO", whatNext: "Что делать дальше", baseActions: ["Не вкладывать всю сумму сразу, а распределить вход на 2–3 части.","Сначала купить более стабильные инструменты: облигации, фонды или кэш-часть.","Акции добавлять постепенно, особенно если рынок волатилен.","Через 30 дней пересмотреть портфель и сравнить результат с планом."], buildPortfolioBtn:"Собрать портфель под мою сумму", improveBtn:"Что можно улучшить?", extendedProBtn:"Получить расширенный план в PRO", openProBtn:"Открыть PRO", fullScenarioPro:"Полный разбор доступен в PRO.",
+    localAnalysis: p=>`Персональный инвестиционный разбор для ${p.name || "инвестора"}\n\nПрофиль:\n• Срок: ${p.term || "не указан"}\n• Сумма: ${p.amount || "не указана"}\n• Цель: ${p.goal || "не указана"}\n• Стиль: ${p.risk || "не указан"}\n\nАнализ:\nС учётом выбранных параметров разумнее рассматривать не одну идею, а несколько сценариев с диверсификацией.\n\nВажно:\nЭтот материал носит информационно-образовательный характер и не является индивидуальной инвестиционной рекомендацией.`,
+    localVariants: [{title:"Вариант 1 — Баланс роста", subtitle:"Умеренный риск и диверсификация", blocks:{"Акции":["Сбер","Норникель","Лукойл"],"Фонды":["TMOS","SBMX"],"Облигации":["ОФЗ 26238"],"Золото":["Фонд на золото"]}}, {title:"Вариант 2 — Более активный", subtitle:"С акцентом на рост капитала", blocks:{"Акции":["Яндекс","Т-Технологии","Норникель"],"Фонды":["SBMX"],"Облигации":["ОФЗ 26215"],"Кэш":["рубли для докупки"]}}],
+    localScenarios:{base:"Базовый сценарий: портфель сохраняет баланс между ростом и защитой, сочетая акции, фонды и облигации.", safe:"Осторожный сценарий: при ухудшении рынка облигации, золото и кэш могут снизить общую просадку.", positive:"Позитивный сценарий: при восстановлении рынка акции и фонды могут дать дополнительный рост портфеля."},
+    amountFor: a=>`Под сумму: ${a}`, portfolioSummary:"Ниже пример структуры под выбранную сумму. Это учебный сценарий, а не индивидуальная инвестиционная рекомендация.", stocks:"Акции", funds:"Фонды", bonds:"Облигации", cashReserve:"Кэш / резерв", portfolioItems:{stocks:["Сбер — примерная доля 15–20%","Лукойл — примерная доля 10–15%"], funds:["TMOS — примерная доля 20–30%","SBMX — примерная доля 10–20%"], bonds:["ОФЗ 26238 — примерная доля 20–30%"], cash:["Оставить 10–15% для докупки при просадке."]}, portfolioWarn:"Перед покупкой проверьте актуальные цены, комиссии и доступность инструментов у брокера.",
+    improveSummary:"На следующем этапе портфель можно сделать точнее: добавить реальные цены, рассчитать количество бумаг под ваш бюджет и сравнить несколько сценариев.", improve1:"1. Точный расчёт под бюджет", improve1Items:["Система рассчитает примерное количество акций, фондов и облигаций.","Покажет, сколько денег останется в кэше.","Подстроит структуру под выбранную сумму."], improve2:"2. Актуальные цены инструментов", improve2Items:["Проверка текущих цен перед покупкой.","Обновление стоимости портфеля.","Сравнение динамики активов."], improve3:"3. Сравнение брокеров", improve3Items:["Сбер, Т-Банк, ВТБ и Альфа.","Комиссии, доступность инструментов и удобство входа.","Подсказка, где удобнее собрать портфель."], improveWarn:"Расширенный расчёт можно вынести в PRO.",
+    savedPortfolioAlert:"Портфель сохранён в личном кабинете.", noSavedProfile:"Пока нет сохранённого профиля. Пройдите опрос, выберите стратегию и портфель, затем сохраните результат.", savedAt:"Сохранено", profileBlock:"Профиль", choiceBlock:"Выбор", fieldName:"Имя", fieldTerm:"Срок", fieldAmount:"Сумма", fieldGoal:"Цель", fieldRisk:"Риск", fieldStrategy:"Стратегия", fieldPortfolio:"Портфель", notSet:"Не указано", notSelectedF:"Не выбрана", notSelectedM:"Не выбран", paymentMissing:"Сначала вставьте ссылку ЮKassa в PAYMENT_URL."
+  },
+  en: {
+    htmlLang: "en", autoNote: "You can choose a language manually. The interface will continue in the selected language.",
+    appSubtitle: "Investment scenarios tailored to your goals.", cabinetBtn: "My cabinet", startBubble: "This is your personal investment assistant.", startBtn: "Start", continueBtn: "Continue", saveBtn: "Save", backBtn: "Back", closeBtn: "Close",
+    structureVariantsTitle: "Suitable structure options", scenariosTitle: "Portfolio behavior scenarios", moreVariantsTitle: "Need more options?", warningText: "This is an educational sample portfolio, not personal investment advice.\nBefore buying, check current prices, broker fees, and instrument availability.",
+    proSubtitle: "Advanced portfolio selection, full scenarios, and more instruments for your budget.", proF1: "✅ 5–10 portfolio options", proF2: "✅ Full defensive scenario", proF3: "✅ Full growth scenario", proF4: "✅ More specific stocks and funds", proF5: "✅ Action plan for your term and amount", buyProBtn: "Get PRO for 149 ₽",
+    readyPortfolioTitle: "Ready portfolio", savePortfolioBtn: "Save portfolio", exactProBtn: "Get exact calculation in PRO", improveTitle: "What can be improved?", improveSubtitle: "Next portfolio level", getThisProBtn: "Get this in PRO", cabinetTitle: "My cabinet", cabinetSubtitle: "Your saved investment profile", saveCurrentProfileBtn: "Save current profile", clearCabinetBtn: "Clear cabinet",
+    progress: (s,t)=>`Step ${s} of ${t}`, nameQ: "What should I call you?", namePlaceholder: "Enter your answer", termQ: n=>`Nice to meet you, ${n}. What is your investment horizon?`, amountQ: "How much do you plan to invest?", goalQ: "What is your investment goal?", riskQ: "Which style is closer to you?",
+    term5: "5 months", term1: "1 year", term2: "2 years", otherTerm: "Other term", termPlaceholder: "For example: 8 months", amount1: "5,000–10,000 rubles", amount2: "10,000–30,000 rubles", otherAmount: "Other amount", amountPlaceholder: "For example: 75,000 rubles", goalSave: "Capital preservation", goalGrow: "Capital growth", otherGoal: "Other goal", goalPlaceholder: "For example: save for an apartment", riskLow: "Conservative", riskMid: "Balanced", riskHigh: "Aggressive",
+    strategyIntro: "I selected 3 strategies for your profile. Choose the most suitable one.", selectBtn: "Select", portfolioIntro: "Now choose one of the portfolios.", selectPortfolioBtn: "Select portfolio",
+    strategies: {low:[["conservative","Strategy 1 — Conservative","Focus on capital preservation"],["moderate_conservative","Strategy 2 — Moderately conservative","A bit more growth potential"],["income_conservative","Strategy 3 — Income-focused","Emphasis on stability"]], mid:[["balanced","Strategy 1 — Balanced","Balance between growth and protection"],["growth_balanced","Strategy 2 — Moderate growth","A stronger focus on growth"],["diversified_balanced","Strategy 3 — Diversified","Broad asset allocation"]], high:[["aggressive","Strategy 1 — Aggressive","High growth potential"],["active_growth","Strategy 2 — Active growth","Focus on growth assets"],["high_return","Strategy 3 — High-return","Maximum potential"]]},
+    portfolios: [["portfolio_1","Portfolio 1",["Stocks — 25%","Funds — 30%","Bonds — 25%","Gold — 10%","Cash — 10%"]],["portfolio_2","Portfolio 2",["Stocks — 35%","Funds — 30%","Bonds — 20%","Gold — 5%","Cash — 10%"]],["portfolio_3","Portfolio 3",["Stocks — 30%","ETF — 25%","Bonds — 25%","Gold — 10%","Cash — 10%"]]],
+    aiLoading: "Preparing a personal analysis of the selected option...", aiUnavailable: "Analysis is temporarily unavailable.", aiError: "Could not connect to AI analysis.", baseScenario: "Base scenario", safeScenario: "Defensive scenario · PRO", positiveScenario: "Growth scenario · PRO", free: "Free", previewPro: "Preview PRO", whatNext: "What to do next", baseActions: ["Do not invest the whole amount at once; split entry into 2–3 parts.","Start with more stable instruments: bonds, funds, or cash reserve.","Add stocks gradually, especially if the market is volatile.","Review the portfolio in 30 days and compare results with the plan."], buildPortfolioBtn:"Build portfolio for my amount", improveBtn:"What can be improved?", extendedProBtn:"Get expanded plan in PRO", openProBtn:"Open PRO", fullScenarioPro:"Full analysis is available in PRO.",
+    localAnalysis: p=>`Personal investment analysis for ${p.name || "investor"}\n\nProfile:\n• Term: ${p.term || "not specified"}\n• Amount: ${p.amount || "not specified"}\n• Goal: ${p.goal || "not specified"}\n• Style: ${p.risk || "not specified"}\n\nAnalysis:\nBased on the selected parameters, it is better to consider several diversified scenarios rather than a single idea.\n\nImportant:\nThis material is informational and educational and is not personal investment advice.`,
+    localVariants: [{title:"Option 1 — Balanced growth", subtitle:"Moderate risk and diversification", blocks:{"Stocks":["Sber","Norilsk Nickel","Lukoil"],"Funds":["TMOS","SBMX"],"Bonds":["OFZ 26238"],"Gold":["Gold fund"]}}, {title:"Option 2 — More active", subtitle:"Focus on capital growth", blocks:{"Stocks":["Yandex","T-Technologies","Norilsk Nickel"],"Funds":["SBMX"],"Bonds":["OFZ 26215"],"Cash":["rubles for buying dips"]}}],
+    localScenarios:{base:"Base scenario: the portfolio keeps a balance between growth and protection by combining stocks, funds, and bonds.", safe:"Defensive scenario: if the market worsens, bonds, gold, and cash can reduce the overall drawdown.", positive:"Growth scenario: if the market recovers, stocks and funds may add extra upside."},
+    amountFor: a=>`For amount: ${a}`, portfolioSummary:"Below is a sample structure for the selected amount. This is an educational scenario, not personal investment advice.", stocks:"Stocks", funds:"Funds", bonds:"Bonds", cashReserve:"Cash / reserve", portfolioItems:{stocks:["Sber — approximate share 15–20%","Lukoil — approximate share 10–15%"], funds:["TMOS — approximate share 20–30%","SBMX — approximate share 10–20%"], bonds:["OFZ 26238 — approximate share 20–30%"], cash:["Keep 10–15% for buying dips."]}, portfolioWarn:"Before buying, check current prices, fees, and instrument availability with your broker.",
+    improveSummary:"At the next stage, the portfolio can be made more precise: add live prices, calculate the number of securities for your budget, and compare scenarios.", improve1:"1. Exact budget calculation", improve1Items:["The system will estimate the number of stocks, funds, and bonds.","It will show how much cash remains.","It will adjust the structure to the selected amount."], improve2:"2. Current instrument prices", improve2Items:["Check current prices before buying.","Update portfolio value.","Compare asset dynamics."], improve3:"3. Broker comparison", improve3Items:["Sber, T-Bank, VTB, and Alfa.","Fees, availability, and ease of entry.","Hint on where it is easier to build the portfolio."], improveWarn:"This extended calculation can be moved to PRO.",
+    savedPortfolioAlert:"Portfolio saved to your cabinet.", noSavedProfile:"No saved profile yet. Complete the survey, choose a strategy and portfolio, then save the result.", savedAt:"Saved", profileBlock:"Profile", choiceBlock:"Choice", fieldName:"Name", fieldTerm:"Term", fieldAmount:"Amount", fieldGoal:"Goal", fieldRisk:"Risk", fieldStrategy:"Strategy", fieldPortfolio:"Portfolio", notSet:"Not specified", notSelectedF:"Not selected", notSelectedM:"Not selected", paymentMissing:"First insert the YooKassa payment link into PAYMENT_URL."
+  },
+  zh: {},
+  de: {}
+};
+
+I18N.zh = {...I18N.en,
+  htmlLang:"zh", autoNote:"您可以手动选择语言。之后界面将使用所选语言。", appSubtitle:"根据您的目标选择投资方案。", cabinetBtn:"我的账户", startBubble:"这是您的个人投资助手。", startBtn:"开始", continueBtn:"继续", saveBtn:"保存", backBtn:"返回", closeBtn:"关闭", structureVariantsTitle:"合适的组合结构", scenariosTitle:"投资组合情景", moreVariantsTitle:"需要更多方案吗？", warningText:"这是教育示例组合，不是个人投资建议。\n购买前请检查价格、佣金和工具可用性。", proSubtitle:"高级组合选择、完整情景和更多工具。", buyProBtn:"购买 PRO — 149 ₽", readyPortfolioTitle:"已生成组合", savePortfolioBtn:"保存组合", exactProBtn:"在 PRO 中获得精确计算", improveTitle:"还能改进什么？", improveSubtitle:"组合的下一阶段", getThisProBtn:"在 PRO 中获取", cabinetTitle:"我的账户", cabinetSubtitle:"已保存的投资档案", saveCurrentProfileBtn:"保存当前档案", clearCabinetBtn:"清空账户",
+  progress:(s,t)=>`第 ${s} 步，共 ${t} 步`, nameQ:"我该如何称呼您？", namePlaceholder:"请输入答案", termQ:n=>`很高兴认识您，${n}。您的投资期限是多久？`, amountQ:"您计划投资多少金额？", goalQ:"您的投资目标是什么？", riskQ:"您更适合哪种风格？", term5:"5个月", term1:"1年", term2:"2年", otherTerm:"其他期限", termPlaceholder:"例如：8个月", amount1:"5,000–10,000 卢布", amount2:"10,000–30,000 卢布", otherAmount:"其他金额", amountPlaceholder:"例如：75,000 卢布", goalSave:"资金保值", goalGrow:"资产增值", otherGoal:"其他目标", goalPlaceholder:"例如：攒钱买房", riskLow:"保守型", riskMid:"平衡型", riskHigh:"进取型", strategyIntro:"我为您的档案选择了 3 个策略。请选择最合适的。", selectBtn:"选择", portfolioIntro:"现在请选择一个投资组合。", selectPortfolioBtn:"选择组合",
+  aiLoading:"正在准备所选方案的个人分析...", aiUnavailable:"分析暂时不可用。", aiError:"无法连接 AI 分析。", baseScenario:"基础情景", safeScenario:"防御情景 · PRO", positiveScenario:"增长情景 · PRO", free:"免费", previewPro:"PRO 预览", whatNext:"下一步怎么做", buildPortfolioBtn:"按我的金额生成组合", improveBtn:"还能改进什么？", extendedProBtn:"在 PRO 中获取扩展计划", openProBtn:"打开 PRO", fullScenarioPro:"完整分析可在 PRO 中查看。", paymentMissing:"请先将 YooKassa 付款链接插入 PAYMENT_URL。"
+};
+I18N.zh.strategies = {low:[["conservative","策略 1 — 保守型","重点是资金保值"],["moderate_conservative","策略 2 — 中度保守","稍高增长潜力"],["income_conservative","策略 3 — 收益型","注重稳定性"]], mid:[["balanced","策略 1 — 平衡型","增长与保护平衡"],["growth_balanced","策略 2 — 温和增长","更偏向增长"],["diversified_balanced","策略 3 — 分散化","广泛资产配置"]], high:[["aggressive","策略 1 — 进取型","高增长潜力"],["active_growth","策略 2 — 主动增长","关注成长资产"],["high_return","策略 3 — 高收益","最大潜力"]]};
+I18N.zh.portfolios = [["portfolio_1","组合 1",["股票 — 25%","基金 — 30%","债券 — 25%","黄金 — 10%","现金 — 10%"]],["portfolio_2","组合 2",["股票 — 35%","基金 — 30%","债券 — 20%","黄金 — 5%","现金 — 10%"]],["portfolio_3","组合 3",["股票 — 30%","ETF — 25%","债券 — 25%","黄金 — 10%","现金 — 10%"]]];
+I18N.zh.localAnalysis = p=>`为 ${p.name || "投资者"} 准备的个人投资分析\n\n档案：\n• 期限：${p.term || "未指定"}\n• 金额：${p.amount || "未指定"}\n• 目标：${p.goal || "未指定"}\n• 风格：${p.risk || "未指定"}\n\n分析：\n根据您的参数，更合理的是考虑多个分散化情景，而不是单一投资想法。\n\n重要：\n本材料仅供信息和教育用途，不构成个人投资建议。`;
+I18N.zh.localScenarios = {base:"基础情景：组合通过股票、基金和债券保持增长与保护之间的平衡。", safe:"防御情景：如果市场恶化，债券、黄金和现金可以帮助降低回撤。", positive:"增长情景：如果市场恢复，股票和基金可能带来额外增长。"};
+I18N.zh.localVariants = [{title:"方案 1 — 平衡增长", subtitle:"中等风险和分散化", blocks:{"股票":["Sber","Norilsk Nickel","Lukoil"],"基金":["TMOS","SBMX"],"债券":["OFZ 26238"],"黄金":["黄金基金"]}}, {title:"方案 2 — 更积极", subtitle:"偏向资本增长", blocks:{"股票":["Yandex","T-Technologies","Norilsk Nickel"],"基金":["SBMX"],"债券":["OFZ 26215"],"现金":["用于低位加仓的卢布"]}}];
+I18N.zh.amountFor=a=>`金额：${a}`; I18N.zh.portfolioSummary="以下是根据所选金额生成的示例结构。这是教育情景，不是个人投资建议。"; I18N.zh.stocks="股票"; I18N.zh.funds="基金"; I18N.zh.bonds="债券"; I18N.zh.cashReserve="现金 / 储备"; I18N.zh.portfolioItems={stocks:["Sber — 约 15–20%","Lukoil — 约 10–15%"],funds:["TMOS — 约 20–30%","SBMX — 约 10–20%"],bonds:["OFZ 26238 — 约 20–30%"],cash:["保留 10–15% 用于回调时加仓。"]}; I18N.zh.portfolioWarn="购买前请检查当前价格、佣金和券商工具可用性。";
+I18N.zh.baseActions=["不要一次性投入全部资金，可分 2–3 次进入。","先购买更稳定的工具：债券、基金或现金部分。","如果市场波动，逐步增加股票。","30 天后复查组合并与计划对比。"];
+I18N.zh.improveSummary="下一阶段可以让组合更精确：添加实时价格、按预算计算证券数量并比较情景。"; I18N.zh.improve1="1. 按预算精确计算"; I18N.zh.improve1Items=["系统将估算股票、基金和债券数量。","显示剩余现金。","根据所选金额调整结构。"];
+I18N.zh.improve2="2. 当前工具价格"; I18N.zh.improve2Items=["购买前检查当前价格。","更新组合价值。","比较资产走势。"];
+I18N.zh.improve3="3. 券商比较"; I18N.zh.improve3Items=["Sber、T-Bank、VTB 和 Alfa。","佣金、可用性和进入便利性。","提示在哪里更容易构建组合。"];
+I18N.zh.improveWarn="扩展计算可以放入 PRO。"; I18N.zh.savedPortfolioAlert="组合已保存到账户。"; I18N.zh.noSavedProfile="暂无保存档案。请完成问卷、选择策略和组合，然后保存结果。"; I18N.zh.savedAt="保存时间"; I18N.zh.profileBlock="档案"; I18N.zh.choiceBlock="选择"; I18N.zh.fieldName="姓名"; I18N.zh.fieldTerm="期限"; I18N.zh.fieldAmount="金额"; I18N.zh.fieldGoal="目标"; I18N.zh.fieldRisk="风险"; I18N.zh.fieldStrategy="策略"; I18N.zh.fieldPortfolio="组合"; I18N.zh.notSet="未指定"; I18N.zh.notSelectedF="未选择"; I18N.zh.notSelectedM="未选择";
+
+I18N.de = {...I18N.en,
+  htmlLang:"de", autoNote:"Sie können die Sprache manuell auswählen. Danach läuft die Oberfläche in der gewählten Sprache.", appSubtitle:"Investment-Szenarien passend zu Ihren Zielen.", cabinetBtn:"Mein Konto", startBubble:"Dies ist Ihr persönlicher Investment-Assistent.", startBtn:"Starten", continueBtn:"Weiter", saveBtn:"Speichern", backBtn:"Zurück", closeBtn:"Schließen", structureVariantsTitle:"Passende Strukturvarianten", scenariosTitle:"Portfolio-Szenarien", moreVariantsTitle:"Mehr Varianten nötig?", warningText:"Dies ist ein beispielhaftes Lernportfolio und keine persönliche Anlageberatung.\nPrüfen Sie vor dem Kauf aktuelle Preise, Gebühren und Verfügbarkeit.", proSubtitle:"Erweiterte Portfolio-Auswahl, vollständige Szenarien und mehr Instrumente für Ihr Budget.", buyProBtn:"PRO für 149 ₽ erhalten", readyPortfolioTitle:"Fertiges Portfolio", savePortfolioBtn:"Portfolio speichern", exactProBtn:"Genaue Berechnung in PRO", improveTitle:"Was kann verbessert werden?", improveSubtitle:"Nächste Portfolio-Stufe", getThisProBtn:"In PRO erhalten", cabinetTitle:"Mein Konto", cabinetSubtitle:"Ihr gespeichertes Investmentprofil", saveCurrentProfileBtn:"Aktuelles Profil speichern", clearCabinetBtn:"Konto leeren",
+  progress:(s,t)=>`Schritt ${s} von ${t}`, nameQ:"Wie darf ich Sie nennen?", namePlaceholder:"Antwort eingeben", termQ:n=>`Freut mich, ${n}. Wie lange möchten Sie investieren?`, amountQ:"Welchen Betrag möchten Sie investieren?", goalQ:"Was ist Ihr Anlageziel?", riskQ:"Welcher Stil passt besser zu Ihnen?", term5:"5 Monate", term1:"1 Jahr", term2:"2 Jahre", otherTerm:"Andere Laufzeit", termPlaceholder:"Zum Beispiel: 8 Monate", amount1:"5.000–10.000 Rubel", amount2:"10.000–30.000 Rubel", otherAmount:"Anderer Betrag", amountPlaceholder:"Zum Beispiel: 75.000 Rubel", goalSave:"Kapitalerhalt", goalGrow:"Kapitalwachstum", otherGoal:"Anderes Ziel", goalPlaceholder:"Zum Beispiel: für eine Wohnung sparen", riskLow:"Konservativ", riskMid:"Ausgewogen", riskHigh:"Aggressiv", strategyIntro:"Ich habe 3 Strategien für Ihr Profil ausgewählt. Wählen Sie die passendste.", selectBtn:"Auswählen", portfolioIntro:"Wählen Sie nun eines der Portfolios.", selectPortfolioBtn:"Portfolio auswählen",
+  aiLoading:"Ich bereite eine persönliche Analyse der gewählten Option vor...", aiUnavailable:"Analyse vorübergehend nicht verfügbar.", aiError:"Verbindung zur AI-Analyse fehlgeschlagen.", baseScenario:"Basisszenario", safeScenario:"Defensives Szenario · PRO", positiveScenario:"Wachstumsszenario · PRO", free:"Kostenlos", previewPro:"PRO-Vorschau", whatNext:"Was als Nächstes tun", buildPortfolioBtn:"Portfolio für meinen Betrag erstellen", improveBtn:"Was kann verbessert werden?", extendedProBtn:"Erweiterten Plan in PRO erhalten", openProBtn:"PRO öffnen", fullScenarioPro:"Die vollständige Analyse ist in PRO verfügbar.", paymentMissing:"Fügen Sie zuerst den YooKassa-Zahlungslink in PAYMENT_URL ein."
+};
+I18N.de.strategies = {low:[["conservative","Strategie 1 — Konservativ","Fokus auf Kapitalerhalt"],["moderate_conservative","Strategie 2 — Moderat konservativ","Etwas mehr Wachstumspotenzial"],["income_conservative","Strategie 3 — Ertragsorientiert","Schwerpunkt Stabilität"]], mid:[["balanced","Strategie 1 — Ausgewogen","Balance zwischen Wachstum und Schutz"],["growth_balanced","Strategie 2 — Moderates Wachstum","Etwas stärkerer Fokus auf Wachstum"],["diversified_balanced","Strategie 3 — Diversifiziert","Breite Asset-Allokation"]], high:[["aggressive","Strategie 1 — Aggressiv","Hohes Wachstumspotenzial"],["active_growth","Strategie 2 — Aktives Wachstum","Fokus auf Wachstumswerte"],["high_return","Strategie 3 — Hohe Rendite","Maximales Potenzial"]]};
+I18N.de.portfolios = [["portfolio_1","Portfolio 1",["Aktien — 25%","Fonds — 30%","Anleihen — 25%","Gold — 10%","Cash — 10%"]],["portfolio_2","Portfolio 2",["Aktien — 35%","Fonds — 30%","Anleihen — 20%","Gold — 5%","Cash — 10%"]],["portfolio_3","Portfolio 3",["Aktien — 30%","ETF — 25%","Anleihen — 25%","Gold — 10%","Cash — 10%"]]];
+I18N.de.localAnalysis = p=>`Persönliche Investmentanalyse für ${p.name || "Investor"}\n\nProfil:\n• Laufzeit: ${p.term || "nicht angegeben"}\n• Betrag: ${p.amount || "nicht angegeben"}\n• Ziel: ${p.goal || "nicht angegeben"}\n• Stil: ${p.risk || "nicht angegeben"}\n\nAnalyse:\nAuf Basis der gewählten Parameter ist es sinnvoller, mehrere diversifizierte Szenarien statt einer einzelnen Idee zu betrachten.\n\nWichtig:\nDieses Material ist informativ und bildungsbezogen und stellt keine persönliche Anlageberatung dar.`;
+I18N.de.localScenarios = {base:"Basisszenario: Das Portfolio hält eine Balance zwischen Wachstum und Schutz durch Aktien, Fonds und Anleihen.", safe:"Defensives Szenario: Bei schlechterem Marktumfeld können Anleihen, Gold und Cash die Schwankung reduzieren.", positive:"Wachstumsszenario: Bei Markterholung können Aktien und Fonds zusätzliches Wachstum bringen."};
+I18N.de.localVariants = [{title:"Option 1 — Ausgewogenes Wachstum", subtitle:"Moderates Risiko und Diversifikation", blocks:{"Aktien":["Sber","Norilsk Nickel","Lukoil"],"Fonds":["TMOS","SBMX"],"Anleihen":["OFZ 26238"],"Gold":["Goldfonds"]}}, {title:"Option 2 — Aktiver", subtitle:"Fokus auf Kapitalwachstum", blocks:{"Aktien":["Yandex","T-Technologies","Norilsk Nickel"],"Fonds":["SBMX"],"Anleihen":["OFZ 26215"],"Cash":["Rubel für Nachkäufe"]}}];
+I18N.de.amountFor=a=>`Für Betrag: ${a}`; I18N.de.portfolioSummary="Unten sehen Sie eine Beispielstruktur für den gewählten Betrag. Dies ist ein Lernszenario, keine persönliche Anlageberatung."; I18N.de.stocks="Aktien"; I18N.de.funds="Fonds"; I18N.de.bonds="Anleihen"; I18N.de.cashReserve="Cash / Reserve"; I18N.de.portfolioItems={stocks:["Sber — ca. 15–20%","Lukoil — ca. 10–15%"],funds:["TMOS — ca. 20–30%","SBMX — ca. 10–20%"],bonds:["OFZ 26238 — ca. 20–30%"],cash:["10–15% für Nachkäufe bei Rücksetzern behalten."]}; I18N.de.portfolioWarn="Prüfen Sie vor dem Kauf aktuelle Preise, Gebühren und Verfügbarkeit beim Broker.";
+I18N.de.baseActions=["Investieren Sie nicht den gesamten Betrag auf einmal, sondern in 2–3 Schritten.","Beginnen Sie mit stabileren Instrumenten: Anleihen, Fonds oder Cash-Reserve.","Aktien schrittweise hinzufügen, besonders bei volatilen Märkten.","Portfolio nach 30 Tagen überprüfen und mit dem Plan vergleichen."];
+I18N.de.improveSummary="Im nächsten Schritt kann das Portfolio genauer werden: Live-Preise, Stückzahlberechnung und Szenariovergleich."; I18N.de.improve1="1. Genaue Budgetberechnung"; I18N.de.improve1Items=["Das System schätzt die Anzahl von Aktien, Fonds und Anleihen.","Es zeigt, wie viel Cash übrig bleibt.","Es passt die Struktur an den gewählten Betrag an."]; I18N.de.improve2="2. Aktuelle Preise"; I18N.de.improve2Items=["Aktuelle Preise vor dem Kauf prüfen.","Portfoliowert aktualisieren.","Asset-Dynamik vergleichen."]; I18N.de.improve3="3. Broker-Vergleich"; I18N.de.improve3Items=["Sber, T-Bank, VTB und Alfa.","Gebühren, Verfügbarkeit und Einstiegskomfort.","Hinweis, wo das Portfolio leichter umzusetzen ist."]; I18N.de.improveWarn="Diese erweiterte Berechnung kann in PRO angeboten werden."; I18N.de.savedPortfolioAlert="Portfolio wurde im Konto gespeichert."; I18N.de.noSavedProfile="Noch kein gespeichertes Profil. Füllen Sie den Fragebogen aus, wählen Sie Strategie und Portfolio und speichern Sie das Ergebnis."; I18N.de.savedAt="Gespeichert"; I18N.de.profileBlock="Profil"; I18N.de.choiceBlock="Auswahl"; I18N.de.fieldName="Name"; I18N.de.fieldTerm="Laufzeit"; I18N.de.fieldAmount="Betrag"; I18N.de.fieldGoal="Ziel"; I18N.de.fieldRisk="Risiko"; I18N.de.fieldStrategy="Strategie"; I18N.de.fieldPortfolio="Portfolio"; I18N.de.notSet="Nicht angegeben"; I18N.de.notSelectedF="Nicht ausgewählt"; I18N.de.notSelectedM="Nicht ausgewählt";
+
+function T(key) { return (I18N[currentLang] && I18N[currentLang][key]) || I18N.ru[key] || key; }
+function listItems(items) { return (items || []).map(x => `<li>${x}</li>`).join(""); }
+function riskKey() { if (profile.risk === T('riskLow')) return 'low'; if (profile.risk === T('riskHigh')) return 'high'; return 'mid'; }
+function getRiskLabel(key) { if (key === 'low') return T('riskLow'); if (key === 'high') return T('riskHigh'); return T('riskMid'); }
+
+function detectLang() {
+  const code = (window.Telegram?.WebApp?.initDataUnsafe?.user?.language_code || navigator.language || "ru").toLowerCase();
+  if (code.startsWith("ru")) return "ru";
+  if (code.startsWith("zh") || code.startsWith("cn")) return "zh";
+  if (code.startsWith("de")) return "de";
+  return "en";
+}
+
+function initLanguageScreen() {
+  const auto = detectLang();
+  currentLang = auto;
+  const note = document.getElementById("autoLangNote");
+  if (note) note.textContent = I18N[auto].autoNote;
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById("htmlRoot").setAttribute("lang", I18N[lang].htmlLang || lang);
+  document.getElementById("langApp").classList.add("hidden");
+  document.getElementById("mainApp").classList.remove("hidden");
+  applyTranslations();
+}
+
+function applyTranslations() {
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    el.textContent = T(key);
+  });
+  const warning = document.querySelector('[data-i18n="warningText"]');
+  if (warning) warning.textContent = T('warningText');
+  updateProgress(1);
+}
+
 const tg = window.Telegram?.WebApp;
 if (tg) {
   tg.ready();
   tg.expand();
 }
+initLanguageScreen();
 
 const API_URL = "https://investpath-backend.onrender.com/analyze";
 const PAYMENT_URL = "ТВОЯ_ССЫЛКА_ЮКАССА";
@@ -526,7 +674,7 @@ const strategies = {
 };
 
 function updateProgress(step) {
-  document.getElementById("progressLabel").textContent = `Шаг ${step} из ${totalSteps}`;
+  document.getElementById("progressLabel").textContent = T('progress')(step, totalSteps);
   document.getElementById("progressFill").style.width = `${(step / totalSteps) * 100}%`;
 }
 
@@ -559,10 +707,11 @@ function renderButtons(items) {
 
 function askName() {
   updateProgress(1);
-  setQuestion("Как я могу к вам обращаться?");
+  setQuestion(T('nameQ'));
   awaitingText = "name";
   document.getElementById("textInputWrap").classList.remove("hidden");
   document.getElementById("textAnswerInput").value = "";
+  document.getElementById("textAnswerInput").placeholder = T('namePlaceholder');
 }
 
 function submitTextAnswer() {
@@ -574,12 +723,12 @@ function submitTextAnswer() {
 
 function askTerm() {
   updateProgress(2);
-  setQuestion(`Приятно познакомиться, ${profile.name}. На какой срок вы планируете инвестировать?`);
+  setQuestion(T('termQ')(profile.name));
   renderButtons([
-    { label: "5 месяцев", onClick: () => saveTerm("5 месяцев") },
-    { label: "1 год", onClick: () => saveTerm("1 год") },
-    { label: "2 года", onClick: () => saveTerm("2 года") },
-    { label: "Другой срок", secondary: true, onClick: () => showCustom("term", "Например: 8 месяцев") }
+    { label: T('term5'), onClick: () => saveTerm(T('term5')) },
+    { label: T('term1'), onClick: () => saveTerm(T('term1')) },
+    { label: T('term2'), onClick: () => saveTerm(T('term2')) },
+    { label: T('otherTerm'), secondary: true, onClick: () => showCustom("term", T('termPlaceholder')) }
   ]);
 }
 
@@ -590,11 +739,11 @@ function saveTerm(value) {
 
 function askAmount() {
   updateProgress(3);
-  setQuestion("Какую сумму вы планируете инвестировать?");
+  setQuestion(T('amountQ'));
   renderButtons([
-    { label: "5 000–10 000 рублей", onClick: () => saveAmount("5 000–10 000 рублей") },
-    { label: "10 000–30 000 рублей", onClick: () => saveAmount("10 000–30 000 рублей") },
-    { label: "Другая сумма", secondary: true, onClick: () => showCustom("amount", "Например: 75 000 рублей") }
+    { label: T('amount1'), onClick: () => saveAmount(T('amount1')) },
+    { label: T('amount2'), onClick: () => saveAmount(T('amount2')) },
+    { label: T('otherAmount'), secondary: true, onClick: () => showCustom("amount", T('amountPlaceholder')) }
   ]);
 }
 
@@ -605,11 +754,11 @@ function saveAmount(value) {
 
 function askGoal() {
   updateProgress(4);
-  setQuestion("Какая у вас цель инвестирования?");
+  setQuestion(T('goalQ'));
   renderButtons([
-    { label: "Сбережение средств", onClick: () => saveGoal("Сбережение средств") },
-    { label: "Приумножение капитала", onClick: () => saveGoal("Приумножение капитала") },
-    { label: "Другая цель", secondary: true, onClick: () => showCustom("goal", "Например: накопить на квартиру") }
+    { label: T('goalSave'), onClick: () => saveGoal(T('goalSave')) },
+    { label: T('goalGrow'), onClick: () => saveGoal(T('goalGrow')) },
+    { label: T('otherGoal'), secondary: true, onClick: () => showCustom("goal", T('goalPlaceholder')) }
   ]);
 }
 
@@ -620,11 +769,11 @@ function saveGoal(value) {
 
 function askRisk() {
   updateProgress(5);
-  setQuestion("Какой стиль вам ближе?");
+  setQuestion(T('riskQ'));
   renderButtons([
-    { label: "Консервативный", onClick: () => saveRisk("Консервативный") },
-    { label: "Сбалансированный", onClick: () => saveRisk("Сбалансированный") },
-    { label: "Агрессивный", onClick: () => saveRisk("Агрессивный") }
+    { label: T('riskLow'), onClick: () => saveRisk(T('riskLow')) },
+    { label: T('riskMid'), onClick: () => saveRisk(T('riskMid')) },
+    { label: T('riskHigh'), onClick: () => saveRisk(T('riskHigh')) }
   ]);
 }
 
@@ -661,19 +810,18 @@ function showStrategies() {
   document.getElementById("questionBlock").classList.add("hidden");
   document.getElementById("strategyBlock").classList.remove("hidden");
 
-  document.getElementById("strategyIntro").textContent =
-    "Под ваш профиль я подобрал 3 стратегии. Выберите наиболее подходящую.";
+  document.getElementById("strategyIntro").textContent = T('strategyIntro');
 
   const wrap = document.getElementById("strategyButtons");
   wrap.innerHTML = "";
 
-  strategies[profile.risk].forEach(s => {
+  I18N[currentLang].strategies[riskKey()].forEach(s => {
     wrap.innerHTML += `
       <div class="portfolio-card">
         <h4>${s[1]}</h4>
         <div class="portfolio-subtitle">${s[2]}</div>
         <div class="buttons">
-          <button onclick="selectStrategy('${s[0]}')">Выбрать</button>
+          <button onclick="selectStrategy('${s[0]}')">${T('selectBtn')}</button>
         </div>
       </div>
     `;
@@ -690,25 +838,18 @@ function showPortfolios() {
   document.getElementById("strategyBlock").classList.add("hidden");
   document.getElementById("portfolioBlock").classList.remove("hidden");
 
-  document.getElementById("portfolioIntro").textContent =
-    "Теперь выберите один из портфелей.";
+  document.getElementById("portfolioIntro").textContent = T('portfolioIntro');
 
   const list = document.getElementById("portfolioList");
   list.innerHTML = "";
 
-  const portfolios = [
-    ["portfolio_1", "Портфель 1", ["Акции — 25%", "Фонды — 30%", "Облигации — 25%", "Золото — 10%", "Кэш — 10%"]],
-    ["portfolio_2", "Портфель 2", ["Акции — 35%", "Фонды — 30%", "Облигации — 20%", "Золото — 5%", "Кэш — 10%"]],
-    ["portfolio_3", "Портфель 3", ["Акции — 30%", "ETF — 25%", "Облигации — 25%", "Золото — 10%", "Кэш — 10%"]]
-  ];
-
-  portfolios.forEach(p => {
+  I18N[currentLang].portfolios.forEach(p => {
     list.innerHTML += `
       <div class="portfolio-card">
         <h4>${p[1]}</h4>
-        <ul>${p[2].map(x => `<li>${x}</li>`).join("")}</ul>
+        <ul>${listItems(p[2])}</ul>
         <div class="buttons">
-          <button onclick="selectPortfolio('${p[0]}')">Выбрать портфель</button>
+          <button onclick="selectPortfolio('${p[0]}')">${T('selectPortfolioBtn')}</button>
         </div>
       </div>
     `;
@@ -741,7 +882,7 @@ async function requestAiAnalysis() {
   const list = document.getElementById("aiVariantsList");
 
   aiBox.classList.remove("hidden");
-  aiBox.innerHTML = `Сейчас подготовлю персональный разбор выбранного варианта...
+  aiBox.innerHTML = `${T('aiLoading')}
 <div class="typing"><span></span><span></span><span></span></div>`;
 
   wrap.classList.add("hidden");
@@ -751,17 +892,18 @@ async function requestAiAnalysis() {
     const res = await fetch(API_URL, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(profile)
+      body: JSON.stringify({ ...profile, language: currentLang, language_name: currentLang === 'ru' ? 'Russian' : currentLang === 'zh' ? 'Chinese' : currentLang === 'de' ? 'German' : 'English' })
     });
 
     const data = await res.json();
 
     setTimeout(() => {
-      aiBox.textContent = data.analysis || "Разбор временно недоступен.";
+      aiBox.textContent = currentLang === 'ru' ? (data.analysis || T('aiUnavailable')) : T('localAnalysis')(profile);
 
-      if (data.variants) {
+      const variantsToRender = currentLang === 'ru' && data.variants ? data.variants : T('localVariants');
+      if (variantsToRender) {
         wrap.classList.remove("hidden");
-        list.innerHTML = data.variants.map(v => `
+        list.innerHTML = variantsToRender.map(v => `
           <div class="ai-variant-card">
             <h4>${v.title}</h4>
             <div class="ai-variant-subtitle">${v.subtitle || ""}</div>
@@ -770,28 +912,26 @@ async function requestAiAnalysis() {
         `).join("");
       }
 
-      if (data.scenarios) {
-        scenarioData = data.scenarios;
-        renderScenarioButtons();
-      }
+      scenarioData = currentLang === 'ru' && data.scenarios ? data.scenarios : T('localScenarios');
+      renderScenarioButtons();
 
-      if (data.pro_offer) {
-        document.getElementById("proOfferText").textContent = data.pro_offer.text;
+      if (data.pro_offer || currentLang !== 'ru') {
+        document.getElementById("proOfferText").textContent = currentLang === 'ru' && data.pro_offer ? data.pro_offer.text : T('proSubtitle');
         document.getElementById("proOfferBox").classList.remove("hidden");
       }
     }, 2500);
 
   } catch (e) {
-    aiBox.textContent = "Не удалось подключиться к AI-анализу.";
+    aiBox.textContent = T('aiError');
   }
 }
 
 function renderScenarioButtons() {
   const wrap = document.getElementById("scenarioButtons");
   wrap.innerHTML = `
-    <button class="ghost" onclick="openScenario('base')">Базовый сценарий</button>
-    <button class="secondary" onclick="openScenario('safe')">Осторожный сценарий · PRO</button>
-    <button class="secondary" onclick="openScenario('positive')">Позитивный сценарий · PRO</button>
+    <button class="ghost" onclick="openScenario('base')">${T('baseScenario')}</button>
+    <button class="secondary" onclick="openScenario('safe')">${T('safeScenario')}</button>
+    <button class="secondary" onclick="openScenario('positive')">${T('positiveScenario')}</button>
   `;
 }
 
@@ -802,36 +942,31 @@ function openScenario(type) {
   if (type === "base") {
     box.innerHTML = `
       <div class="scenario-detail-card">
-        <div class="scenario-badge">Бесплатно</div>
-        <h4>Базовый сценарий</h4>
-        <div class="muted">${scenarioData?.base || "Сценарий временно недоступен."}</div>
+        <div class="scenario-badge">${T('free')}</div>
+        <h4>${T('baseScenario')}</h4>
+        <div class="muted">${scenarioData?.base || T('aiUnavailable')}</div>
 
         <div class="instrument-block">
-          <div class="instrument-block-title">Что делать дальше</div>
-          <ul>
-            <li>Не вкладывать всю сумму сразу, а распределить вход на 2–3 части.</li>
-            <li>Сначала купить более стабильные инструменты: облигации, фонды или кэш-часть.</li>
-            <li>Акции добавлять постепенно, особенно если рынок волатилен.</li>
-            <li>Через 30 дней пересмотреть портфель и сравнить результат с планом.</li>
-          </ul>
+          <div class="instrument-block-title">${T('whatNext')}</div>
+          <ul>${listItems(T('baseActions'))}</ul>
         </div>
 
         <div class="buttons">
-          <button onclick="buildPortfolio()">Собрать портфель под мою сумму</button>
-          <button onclick="showNextImprovement()">Что можно улучшить?</button>
-          <button class="secondary" onclick="openProOffer()">Получить расширенный план в PRO</button>
+          <button onclick="buildPortfolio()">${T('buildPortfolioBtn')}</button>
+          <button onclick="showNextImprovement()">${T('improveBtn')}</button>
+          <button class="secondary" onclick="openProOffer()">${T('extendedProBtn')}</button>
         </div>
       </div>
     `;
   } else {
     box.innerHTML = `
       <div class="scenario-detail-card">
-        <div class="scenario-badge">Preview PRO</div>
-        <h4>${type === "safe" ? "Осторожный сценарий" : "Позитивный сценарий"}</h4>
-        <div class="muted">${scenarioData?.[type] || "Сценарий временно недоступен."}</div>
-        <div class="preview-lock">Полный разбор доступен в PRO.</div>
+        <div class="scenario-badge">${T('previewPro')}</div>
+        <h4>${type === "safe" ? T('safeScenario').replace(' · PRO','') : T('positiveScenario').replace(' · PRO','')}</h4>
+        <div class="muted">${scenarioData?.[type] || T('aiUnavailable')}</div>
+        <div class="preview-lock">${T('fullScenarioPro')}</div>
         <div class="buttons">
-          <button class="secondary" onclick="openProOffer()">Открыть PRO</button>
+          <button class="secondary" onclick="openProOffer()">${T('openProBtn')}</button>
         </div>
       </div>
     `;
@@ -843,49 +978,35 @@ function buildPortfolio() {
   const subtitle = document.getElementById("portfolioModalSubtitle");
   const body = document.getElementById("portfolioModalBody");
 
-  const amount = profile.amount || "10 000 рублей";
-  subtitle.textContent = `Под сумму: ${amount}`;
+  const amount = profile.amount || T('amount2');
+  subtitle.textContent = T('amountFor')(amount);
 
   body.innerHTML = `
     <div class="portfolio-summary">
-      <div class="muted">
-        Ниже пример структуры под выбранную сумму. Это учебный сценарий, а не индивидуальная инвестиционная рекомендация.
-      </div>
+      <div class="muted">${T('portfolioSummary')}</div>
     </div>
 
     <div class="instrument-block">
-      <div class="instrument-block-title">Акции</div>
-      <ul>
-        <li>Сбер — примерная доля 15–20%</li>
-        <li>Лукойл — примерная доля 10–15%</li>
-      </ul>
+      <div class="instrument-block-title">${T('stocks')}</div>
+      <ul>${listItems(T('portfolioItems').stocks)}</ul>
     </div>
 
     <div class="instrument-block">
-      <div class="instrument-block-title">Фонды</div>
-      <ul>
-        <li>TMOS — примерная доля 20–30%</li>
-        <li>SBMX — примерная доля 10–20%</li>
-      </ul>
+      <div class="instrument-block-title">${T('funds')}</div>
+      <ul>${listItems(T('portfolioItems').funds)}</ul>
     </div>
 
     <div class="instrument-block">
-      <div class="instrument-block-title">Облигации</div>
-      <ul>
-        <li>ОФЗ 26238 — примерная доля 20–30%</li>
-      </ul>
+      <div class="instrument-block-title">${T('bonds')}</div>
+      <ul>${listItems(T('portfolioItems').bonds)}</ul>
     </div>
 
     <div class="instrument-block">
-      <div class="instrument-block-title">Кэш / резерв</div>
-      <ul>
-        <li>Оставить 10–15% для докупки при просадке.</li>
-      </ul>
+      <div class="instrument-block-title">${T('cashReserve')}</div>
+      <ul>${listItems(T('portfolioItems').cash)}</ul>
     </div>
 
-    <div class="warn" style="margin-top:12px;">
-      Перед покупкой проверьте актуальные цены, комиссии и доступность инструментов у брокера.
-    </div>
+    <div class="warn" style="margin-top:12px;">${T('portfolioWarn')}</div>
   `;
 
   modal.classList.remove("hidden");
@@ -901,42 +1022,25 @@ function showNextImprovement() {
 
   body.innerHTML = `
     <div class="portfolio-summary">
-      <div class="muted">
-        На следующем этапе портфель можно сделать точнее: добавить реальные цены,
-        рассчитать количество бумаг под ваш бюджет и сравнить несколько сценариев.
-      </div>
+      <div class="muted">${T('improveSummary')}</div>
     </div>
 
     <div class="instrument-block">
-      <div class="instrument-block-title">1. Точный расчёт под бюджет</div>
-      <ul>
-        <li>Система рассчитает примерное количество акций, фондов и облигаций.</li>
-        <li>Покажет, сколько денег останется в кэше.</li>
-        <li>Подстроит структуру под выбранную сумму.</li>
-      </ul>
+      <div class="instrument-block-title">${T('improve1')}</div>
+      <ul>${listItems(T('improve1Items'))}</ul>
     </div>
 
     <div class="instrument-block">
-      <div class="instrument-block-title">2. Актуальные цены инструментов</div>
-      <ul>
-        <li>Проверка текущих цен перед покупкой.</li>
-        <li>Обновление стоимости портфеля.</li>
-        <li>Сравнение динамики активов.</li>
-      </ul>
+      <div class="instrument-block-title">${T('improve2')}</div>
+      <ul>${listItems(T('improve2Items'))}</ul>
     </div>
 
     <div class="instrument-block">
-      <div class="instrument-block-title">3. Сравнение брокеров</div>
-      <ul>
-        <li>Сбер, Т-Банк, ВТБ и Альфа.</li>
-        <li>Комиссии, доступность инструментов и удобство входа.</li>
-        <li>Подсказка, где удобнее собрать портфель.</li>
-      </ul>
+      <div class="instrument-block-title">${T('improve3')}</div>
+      <ul>${listItems(T('improve3Items'))}</ul>
     </div>
 
-    <div class="warn" style="margin-top:12px;">
-      Расширенный расчёт можно вынести в PRO.
-    </div>
+    <div class="warn" style="margin-top:12px;">${T('improveWarn')}</div>
   `;
 
   modal.classList.remove("hidden");
@@ -949,22 +1053,23 @@ function closeImprovementModal() {
 function savePortfolio() {
   saveProfileToCabinet();
   if (window.Telegram && Telegram.WebApp) {
-    Telegram.WebApp.showAlert("Портфель сохранён в личном кабинете.");
+    Telegram.WebApp.showAlert(T('savedPortfolioAlert'));
   } else {
-    alert("Портфель сохранён в личном кабинете.");
+    alert(T('savedPortfolioAlert'));
   }
 }
 
 function saveProfileToCabinet() {
   const savedData = {
-    name: profile.name || "Не указано",
-    term: profile.term || "Не указано",
-    amount: profile.amount || "Не указано",
-    goal: profile.goal || "Не указано",
-    risk: profile.risk || "Не указано",
-    strategy: profile.strategy || "Не выбрана",
-    portfolio: profile.portfolio || "Не выбран",
-    savedAt: new Date().toLocaleString("ru-RU")
+    name: profile.name || T('notSet'),
+    term: profile.term || T('notSet'),
+    amount: profile.amount || T('notSet'),
+    goal: profile.goal || T('notSet'),
+    risk: profile.risk || T('notSet'),
+    strategy: profile.strategy || T('notSelectedF'),
+    portfolio: profile.portfolio || T('notSelectedM'),
+    language: currentLang,
+    savedAt: new Date().toLocaleString(currentLang === 'ru' ? "ru-RU" : currentLang === 'de' ? "de-DE" : currentLang === 'zh' ? "zh-CN" : "en-US")
   };
 
   localStorage.setItem("investpath_profile", JSON.stringify(savedData));
@@ -978,9 +1083,7 @@ function openCabinet() {
   if (!saved) {
     body.innerHTML = `
       <div class="portfolio-summary">
-        <div class="muted">
-          Пока нет сохранённого профиля. Пройдите опрос, выберите стратегию и портфель, затем сохраните результат.
-        </div>
+        <div class="muted">${T('noSavedProfile')}</div>
       </div>
     `;
   } else {
@@ -988,25 +1091,25 @@ function openCabinet() {
 
     body.innerHTML = `
       <div class="portfolio-summary">
-        <div class="muted">Сохранено: ${data.savedAt}</div>
+        <div class="muted">${T('savedAt')}: ${data.savedAt}</div>
       </div>
 
       <div class="instrument-block">
-        <div class="instrument-block-title">Профиль</div>
+        <div class="instrument-block-title">${T('profileBlock')}</div>
         <ul>
-          <li>Имя: ${data.name}</li>
-          <li>Срок: ${data.term}</li>
-          <li>Сумма: ${data.amount}</li>
-          <li>Цель: ${data.goal}</li>
-          <li>Риск: ${data.risk}</li>
+          <li>${T('fieldName')}: ${data.name}</li>
+          <li>${T('fieldTerm')}: ${data.term}</li>
+          <li>${T('fieldAmount')}: ${data.amount}</li>
+          <li>${T('fieldGoal')}: ${data.goal}</li>
+          <li>${T('fieldRisk')}: ${data.risk}</li>
         </ul>
       </div>
 
       <div class="instrument-block">
-        <div class="instrument-block-title">Выбор</div>
+        <div class="instrument-block-title">${T('choiceBlock')}</div>
         <ul>
-          <li>Стратегия: ${data.strategy}</li>
-          <li>Портфель: ${data.portfolio}</li>
+          <li>${T('fieldStrategy')}: ${data.strategy}</li>
+          <li>${T('fieldPortfolio')}: ${data.portfolio}</li>
         </ul>
       </div>
     `;
@@ -1040,9 +1143,9 @@ function closeProScreen() {
 function buyPro() {
   if (PAYMENT_URL === "ТВОЯ_ССЫЛКА_ЮКАССА") {
     if (window.Telegram && Telegram.WebApp) {
-      Telegram.WebApp.showAlert("Сначала вставьте ссылку ЮKassa в PAYMENT_URL.");
+      Telegram.WebApp.showAlert(T('paymentMissing'));
     } else {
-      alert("Сначала вставьте ссылку ЮKassa в PAYMENT_URL.");
+      alert(T('paymentMissing'));
     }
     return;
   }
